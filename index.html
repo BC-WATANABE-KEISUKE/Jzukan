@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/react@18.3.1/umd/react.production.min.js" integrity="sha384-DGyLxAyjq0f9SPpVevD6IgztCFlnMF6oW/XQGmfe+IsZ8TqEiDrcHkMLKI6fiB/Z" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js" integrity="sha384-gTGxhz21lVGYNMcdJOyq01Edg0jhn/c22nsx0kyqP0TxaV5WVdsSH1fSDUf5YJj1" crossorigin="anonymous"></script>
+  <!-- 🌟 Babelのバージョンを安定版（7.12.9）に固定します。これによって、最新Babelが勝手に書き出す「import/export」命令のバグを根本から完全に防ぎます -->
+  <script src="https://unpkg.com/@babel/standalone@7.12.9/babel.min.js" integrity="sha384-DAEnJvnqLufsMM43ZLDtVufrKix6PW4LjKZDaWjjZBhs8skvrPPzSkmS1J5QqTR8" crossorigin="anonymous"></script>
+  
+  <!-- 🛡️ 【iPad内蔵クレーが万が一認識されない場合のWebフォント予備ルート】 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@400;600&swap" rel="stylesheet">
+
+  <style>
+    /* 🛠️ 【アプリ全体の背景色指定：bodyのみに限定】 */
+    body {
+      background-color: #f1f5f9 !important;
+    }
+
+    /* 🛠️ 【ルール2：ボタンやもくじ（システムUI、単元名、タイトルなど）のフォント指定】 */
+    body, button, input, select, textarea, h2, h3 { 
+      margin: 0; 
+      padding: 0; 
+      font-family: sans-serif;
+      -webkit-tap-highlight-color: transparent !important; 
+      -webkit-user-select: none !important; 
+      user-select: none !important;         
+    }
+
+    *, *::before, *::after {
+      -webkit-tap-highlight-color: transparent !important;
+      -webkit-focus-ring-color: transparent !important;
+      outline: none !important;
+    }
+
+    span, ruby, rt, rb, rp, .ruby-container, .ruby-item {
+      background-color: transparent !important;
+      -webkit-touch-callout: none !important;
+    }
+
+    ::selection {
+      background: transparent !important;
+      color: inherit !important;
+    }
+    ::-webkit-selection {
+      background: transparent !important;
+      color: inherit !important;
+    }
+
+    .bg-white {
+      background-color: #ffffff !important;
+    }
+    .bg-slate-50 {
+      background-color: #f8fafc !important;
+    }
+    .bg-slate-100 {
+      background-color: #f1f5f9 !important;
+    }
+
+    .word-label { 
+      position: absolute; 
+      top: 0.75rem; 
+      left: 0.75rem; 
+      z-index: 30; 
+      background: rgba(255, 255, 255, 0.85) !important; 
+      backdrop-filter: blur(8px);
+      padding: 0.5rem 1.25rem !important; 
+      border-radius: 0.75rem; 
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      border: 1px solid rgba(255,255,255,0.3);
+      font-size: 1.625rem !important; 
+      white-space: nowrap !important; 
+    }
+
+    button:focus, button:active, h2:focus, h3:focus, span:focus {
+      outline: none !important;
+      background-color: transparent !important;
+    }
+    
+    .word-label, .word-label .ruby-container, .word-label .ruby-item, .word-label .rt, .word-label .rb, .word-label ruby, .word-label rt, .word-label rp {
+      font-family: "Klee-Medium", "Klee-Regular", "クレー", "Klee", "Klee One", "KleeOne", "Hiragino Maru Gothic ProN", "ヒラギノ丸ゴ ProN", serif;
+    }
+
+    .round-font {
+      font-family: "Arial Rounded MT Bold", "Hiragino Maru Gothic ProN", "ヒラギノ丸ゴ ProN", "Klee One", "Klee-Medium", "Klee-Regular", "クレー", "Klee", "KleeOne", sans-serif;
+    }
+
+    .ruby-container { display: inline-flex; vertical-align: bottom; line-height: 1; }
+    .ruby-item { display: inline-flex; flex-direction: column; align-items: center; }
+    
+    .rt { 
+      font-size: 0.45em; 
+      font-weight: 600; 
+      padding-bottom: 0.22em; 
+      height: 1em; 
+      display: flex; 
+      align-items: flex-end; 
+      justify-content: center; 
+      width: 100%; 
+      white-space: nowrap; 
+    }
+    .rb { line-height: 1; }
+    
+    .video-viewport { 
+      position: relative; 
+      width: 100%; 
+      aspect-ratio: 16 / 9; 
+      background: #000; 
+      overflow: hidden; 
+    }
+    .video-frame { 
+      position: absolute; 
+      top: -48px; 
+      left: 0; 
+      width: 100%; 
+      height: calc(100% + 96px); 
+      border: 0;
+    }
+    
+    .img-btn { background: rgba(255,255,255,0.9); width: 50px; height: 50px; border-radius: 25px; font-weight: bold; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.15); pointer-events: auto; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <!-- 🌟 Babelのバージョンを下げたため、クラシックな指定だけで確実に動作するようになります -->
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    const Icons = {
+      Back: () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="m15 18-6-6 6-6"/></svg>,
+      Grid: () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>,
+      X: () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    };
+
+    const Ruby = ({ t, r }) => {
+      if (!t) return null;
+
+      const cleanT = typeof t === 'string' ? t.trim() : '';
+
+      if (
+        cleanT.startsWith('<') || 
+        cleanT.includes('<ruby') || 
+        cleanT.includes('<span>') || 
+        cleanT.includes('&lt;')
+      ) {
+        let htmlContent = t;
+        if (htmlContent.includes('&lt;')) {
+          htmlContent = htmlContent
+            .replace(/&lt;/g, '<')
+            .replace(/&gt;/g, '>')
+            .replace(/&amp;/g, '&');
+        }
+        return <span dangerouslySetInnerHTML={{ __html: htmlContent }} />;
+      }
+
+      if (!r || t === r) return <span>{t}</span>;
+
+      const isKanji = (char) => /[\u4E00-\u9FFF]/.test(char);
+      const memo = {};
+
+      const match = (tIdx, rIdx) => {
+        const key = `${tIdx},${rIdx}`;
+        if (key in memo) return memo[key];
+
+        if (tIdx === t.length && rIdx === r.length) return [];
+        if (tIdx === t.length || rIdx === r.length) return null;
+
+        const charT = t[tIdx];
+
+        if (!isKanji(charT)) {
+          if (charT === r[rIdx]) {
+            const next = match(tIdx + 1, rIdx + 1);
+            if (next !== null) {
+              const res = [{ isKanji: false, text: charT }, ...next];
+              memo[key] = res;
+              return res;
+            }
+          }
+          memo[key] = null;
+          return null;
+        } else {
+          let startKanji = tIdx;
+          while (tIdx < t.length && isKanji(t[tIdx])) tIdx++;
+          const kanjiPart = t.substring(startKanji, tIdx);
+
+          for (let len = 1; len <= r.length - rIdx; len++) {
+            const rubyPart = r.substring(rIdx, rIdx + len);
+            const next = match(tIdx, rIdx + len);
+            if (next !== null) {
+              const res = [{ isKanji: true, text: kanjiPart, ruby: rubyPart }, ...next];
+              memo[key] = res;
+              return res;
+            }
+          }
+          memo[key] = null;
+          return null;
+        }
+      };
+
+      const alignment = match(0, 0);
+
+      if (alignment === null) {
+        const parts = [];
+        let i = 0, j = 0;
+        const kanjiRegex = /[\u4E00-\u9FFF]/;
+        while (i < t.length) {
+          if (kanjiRegex.test(t[i])) {
+            let start = i;
+            while (i < t.length && kanjiRegex.test(t[i])) i++;
+            let kanjiPart = t.substring(start, i);
+            let rubyPart = r.substring(j, j + (r.length - t.length + kanjiPart.length));
+            parts.push(<span key={start} className="ruby-item"><span className="rt">{rubyPart}</span><span className="rb">{kanjiPart}</span></span>);
+            j += rubyPart.length;
+          } else {
+            parts.push(<span key={i} className="rb self-end">{t[i]}</span>);
+            i++; j++;
+          }
+        }
+        return <span className="ruby-container">{parts}</span>;
+      }
+
+      return (
+        <span className="ruby-container">
+          {alignment.map((item, idx) => {
+            if (item.isKanji) {
+              return (
+                <span key={idx} className="ruby-item">
+                  <span className="rt">{item.ruby}</span>
+                  <span className="rb">{item.text}</span>
+                </span>
+              );
+            } else {
+              return (
+                <span key={idx} className="rb self-end">
+                  {item.text}
+                </span>
+              );
+            }
+          })}
+        </span>
+      );
+    };
+
+    const WordCard = ({ item, index }) => {
+  const [imgIdx, setImgIdx] = useState(0);
+  const ids = String(item.id || "").split(',').map(s => s.trim()).filter(Boolean);
+  const isVideo = String(item.type || "").toLowerCase().includes('video');
+  const hasMeaning = item.meaning && String(item.meaning).trim() !== "" && String(item.meaning) !== "undefined";
+
+  const [imgFit, setImgFit] = useState('contain');
+
+  useEffect(() => {
+    setImgFit('contain');
+  }, [imgIdx]);
+
+  const handleImageLoad = (e) => {
+    const { naturalWidth, naturalHeight } = e.target;
+    if (naturalWidth > naturalHeight) {
+      setImgFit('cover');
+    } else {
+      setImgFit('contain');
+    }
+  };
+
+  return (
+
+        <div id={`word-${index}`} className="mb-10 bg-white rounded-[2rem] shadow-lg border border-slate-200 overflow-hidden max-w-4xl mx-auto">
+          <div className="relative">
+            <div className="word-label">
+              <span className="font-black text-slate-800 tracking-tighter">
+                <Ruby t={item.word} r={item.furigana} />
+              </span>
+            </div>
+
+            <div className="video-viewport">
+              {ids.length === 0 ? (
+                <div className="w-full h-full flex items-center justify-center text-slate-400 font-bold bg-slate-100">じゅんび中</div>
+              ) : isVideo ? (
+                <iframe src={`https://drive.google.com/file/d/${ids[0]}/preview`} className="video-frame" allow="autoplay"></iframe>
+              ) : (
+<div className="w-full h-full relative flex items-center justify-center bg-white overflow-hidden">
+  {imgFit === 'contain' && (
+    <img
+      src={`https://drive.google.com/thumbnail?id=${ids[imgIdx]}&sz=w1000`}
+      aria-hidden="true"
+      className="absolute inset-0 w-full h-full object-cover scale-110 blur-2xl opacity-70"
+    />
+  )}
+  <img
+    key={ids[imgIdx]}
+    src={`https://drive.google.com/thumbnail?id=${ids[imgIdx]}&sz=w1000`}
+    onLoad={handleImageLoad}
+    className={imgFit === 'cover' ? "w-full h-full object-cover relative z-10" : "w-full h-full object-contain relative z-10"}
+  />
+                  {ids.length > 1 && (
+  <div className="absolute inset-x-4 flex justify-between pointer-events-none z-20">
+                      <button onClick={() => setImgIdx((imgIdx - 1 + ids.length) % ids.length)} className="img-btn text-indigo-600">〈</button>
+                      <button onClick={() => setImgIdx((imgIdx + 1) % ids.length)} className="img-btn text-indigo-600">〉</button>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {hasMeaning && (
+            <div className="px-8 py-5 text-2xl font-black text-slate-900 leading-tight border-t border-slate-100 bg-white">
+              {item.meaning}
+            </div>
+          )}
+        </div>
+      );
+    };
+
+    /* 🌟 教材について説明する画面コンポーネント（GASアプリ適合版） */
+    const AboutPage = ({ onBack }) => {
+      const notIncluded = [
+        {
+          num: "①",
+          title: "教員の動作化で伝わるもの",
+          example: "ため息をつく",
+          reason: "その場での実演の方が、速く正確に伝わるため。"
+        },
+        {
+          num: "②",
+          title: "教科書と価値が重複するもの",
+          example: "防空壕、ヤブガラシ",
+          reason: "教科書にQRコードや挿絵が既に用意されている語彙は、教科書会社が監修した素材を優先して使う方が適切なため。"
+        },
+        {
+          num: "③",
+          title: "写真の入手が困難で、イラスト化しても理解の助けになりづらいもの",
+          example: "ほしいい",
+          reason: "特に戦争関連用語は、写真素材が流通していない上、見た目からは意味が伝わりにくく、イラスト化してもかえって理解を妨げる可能性があるため。"
+        },
+        {
+          num: "④",
+          title: "中立性の観点から、イラスト化を避けたほうがよいもの",
+          example: "出征、雑嚢（ざつのう）",
+          reason: "写真準備が困難であることに加え、イラスト化する場合、特定の思想性を帯びた表現が意図せず入り込むリスクがあるため。中立性を守るための判断。"
+        }
+      ];
+
+      return (
+        <div className="min-h-screen w-full bg-slate-100 antialiased selection:bg-transparent">
+          <div className="sticky top-0 z-40 bg-white/90 backdrop-blur-xl border-b p-4 flex items-center px-8">
+            <button onClick={onBack} className="p-3 bg-slate-100 rounded-full text-slate-700 active:scale-95">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                <path d="m15 18-6-6 6-6" />
+              </svg>
+            </button>
+            <span className="ml-4 font-extrabold text-slate-700 text-lg">この教材について</span>
+          </div>
+
+          <div className="max-w-4xl mx-auto p-6 mt-6 space-y-8 pb-20">
+            {/* タイトル＋コンセプト */}
+            <div className="bg-white rounded-3xl shadow-md border border-slate-200 p-8 md:p-10">
+              <div className="border-l-8 border-indigo-500 pl-4 mb-4">
+                <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight">
+                  「にほんごずかん」とは？
+                </h2>
+              </div>
+              <p className="text-lg md:text-xl font-extrabold text-slate-800 leading-relaxed mt-6">
+                <span className="text-indigo-600">「教える」から「見せる」へ。</span>
+                文化背景や生活経験による言語理解の差＝「言葉のスキマ」を、1枚の写真やイラストなどで直感的に補完。外国人児童の理解を促し、
+                <span className="underline decoration-indigo-300 decoration-2 underline-offset-2">読解などの本質的な学びにかける時間を増やします。</span>
+              </p>
+            </div>
+
+            {/* 🛠️ 構文エラーを修正した収録語彙セクション */}
+            <div className="bg-white rounded-3xl shadow-md border border-slate-200 p-8 flex flex-col md:flex-row md:items-center gap-6">
+              <div className="flex items-center gap-3 text-indigo-500 shrink-0 md:w-64">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" className="shrink-0">
+                  <circle cx="12" cy="12" r="9" />
+                </svg>
+                {/* 🌟 タイトルサイズを text-xl -> text-2xl に拡大し、下の非収録タイトルと統一 */}
+                <h3 className="text-2xl font-extrabold text-slate-900">収録している語彙</h3>
+              </div>
+                                          <div className="flex-1">
+                <p className="text-base font-bold text-slate-700 leading-relaxed">
+                  教科書の場面理解を左右する語彙のうち、概念理解が難しい語彙や、馴染みの薄い日本特有の語彙などを厳選。
+                </p>
+                <p className="text-base font-extrabold text-slate-500 mt-2">
+                  例：先祖、あちこち、わら、豆まき など
+                </p>
+              </div>
+            </div>
+
+            {/* ✕ あえて収録していない語彙（メインセクション） */}
+            <div className="bg-white rounded-3xl shadow-md border border-slate-200 p-8 md:p-10">
+              <div className="flex items-center gap-2 text-rose-500 mb-2">
+                <span className="text-2xl font-black">✕</span>
+                <h3 className="text-2xl font-extrabold text-slate-900">あえて収録していない語彙</h3>
+              </div>
+                            <p className="text-base font-bold text-slate-500 mb-8">
+                情報過多を避け、<span className="text-rose-500">現場での適切な指導</span>につなげるための判断基準です。
+              </p>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                {notIncluded.map((cat, i) => (
+                  <div key={i} className="bg-slate-50 rounded-2xl border border-slate-100 p-6 text-left">
+                    <h4 className="text-lg font-extrabold text-slate-800 leading-snug mb-3">{cat.title}</h4>
+                    <p className="text-base font-extrabold text-slate-500 mt-3 mb-2">
+                      例：{cat.example}
+                    </p>
+                    <p className="text-base font-bold text-slate-600 leading-relaxed">➔ {cat.reason}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* まとめ */}
+            <div className="bg-indigo-50 rounded-3xl shadow-sm border border-indigo-200 p-8 md:p-10">
+              <p className="text-base md:text-lg font-extrabold text-slate-800 leading-relaxed">
+                このアプリは『なんでも載っている辞典』ではなく、<span className="text-indigo-600 underline decoration-indigo-300 decoration-2 underline-offset-2">写真・イラスト・短い動画のいずれか1つで、外国人児童の理解が進む語彙</span>に絞った授業用補助教材です。
+              </p>
+              <p className="text-sm md:text-base font-medium text-slate-700 leading-relaxed mt-4 border-t border-indigo-200 pt-4">
+                動作化や個別の説明のほうが伝わりやすい語彙、状況に応じた配慮が必要な語彙については、先生方の現場でのご判断と工夫によって、より良い授業につなげていただければと思います。
+              </p>
+            </div>
+          </div>
+        </div>
+      );
+    };
+
+    /* 🌟 学年選択画面は元デザインの固定サイズ（860×620）で組み、CSS transformで画面いっぱいに拡大表示する（background-size:coverと同じ考え方） */
+    const DESIGN_W = 860;
+    const DESIGN_H = 620;
+
+    const GRADE_PALETTE = [
+      { base: 'oklch(66% .18 25)',  dark: 'oklch(48% .18 25)',  height: 360 },
+      { base: 'oklch(82% .19 96)',  dark: 'oklch(55% .17 96)',  height: 378 },
+      { base: 'oklch(66% .15 150)', dark: 'oklch(38% .15 150)', height: 368 },
+      { base: 'oklch(60% .13 250)', dark: 'oklch(36% .13 250)', height: 386 },
+      { base: 'oklch(66% .15 300)', dark: 'oklch(40% .15 300)', height: 372 },
+      { base: 'oklch(68% .17 40)',  dark: 'oklch(46% .17 40)',  height: 364 },
+    ];
+
+    /* 🌟 学年選択画面の装飾用本棚シルエット背景。Claude Designで作成した元デザインの静的マークアップをそのまま再現 */
+    const BOOKSHELF_BG_HTML = `
+      <div style="position:absolute;left:20px;right:20px;top:66px;height:138px;z-index:0;display:flex;align-items:flex-end;justify-content:flex-start;opacity:0.26;gap:2px">
+        <div style="width:18px;height:100px;background:oklch(74% .09 25);border-radius:3px 3px 0 0"></div>
+        <div style="width:15px;height:120px;background:oklch(70% .08 85);border-radius:3px 3px 0 0"></div>
+        <div style="width:16px;height:86px;background:oklch(66% .08 150);border-radius:3px 3px 0 0"></div>
+        <div style="width:22px;height:32px;background:oklch(64% .08 250);border-radius:2px;transform:rotate(-12deg);transform-origin:bottom center;position:relative"></div>
+        <div style="width:14px;height:128px;background:oklch(76% .09 25);border-radius:3px 3px 0 0"></div>
+        <div style="width:15px;height:118px;background:oklch(72% .08 85);border-radius:3px 3px 0 0"></div>
+        <div style="width:17px;height:80px;background:oklch(68% .08 150);border-radius:3px 3px 0 0"></div>
+        <div style="width:16px;height:112px;background:oklch(62% .08 250);border-radius:3px 3px 0 0"></div>
+        <div style="width:18px;height:94px;background:oklch(78% .09 25);border-radius:3px 3px 0 0"></div>
+        <div style="width:16px;height:124px;background:oklch(70% .08 150);border-radius:3px 3px 0 0"></div>
+        <div style="width:15px;height:88px;background:oklch(60% .08 250);border-radius:3px 3px 0 0"></div>
+        <div style="width:18px;height:100px;background:oklch(74% .09 25);border-radius:3px 3px 0 0"></div>
+        <div style="width:15px;height:120px;background:oklch(70% .08 85);border-radius:3px 3px 0 0"></div>
+        <div style="width:16px;height:86px;background:oklch(66% .08 150);border-radius:3px 3px 0 0"></div>
+        <div style="width:22px;height:32px;background:oklch(64% .08 250);border-radius:2px;transform:rotate(-12deg);transform-origin:bottom center;position:relative"></div>
+        <div style="width:14px;height:128px;background:oklch(76% .09 25);border-radius:3px 3px 0 0"></div>
+        <div style="width:15px;height:118px;background:oklch(72% .08 85);border-radius:3px 3px 0 0"></div>
+        <div style="width:17px;height:80px;background:oklch(68% .08 150);border-radius:3px 3px 0 0"></div>
+        <div style="width:16px;height:112px;background:oklch(62% .08 250);border-radius:3px 3px 0 0"></div>
+        <div style="width:18px;height:94px;background:oklch(78% .09 25);border-radius:3px 3px 0 0"></div>
+        <div style="width:16px;height:124px;background:oklch(70% .08 150);border-radius:3px 3px 0 0"></div>
+        <div style="width:15px;height:88px;background:oklch(60% .08 250);border-radius:3px 3px 0 0"></div>
+        <div style="width:18px;height:100px;background:oklch(74% .09 25);border-radius:3px 3px 0 0"></div>
+        <div style="width:15px;height:120px;background:oklch(70% .08 85);border-radius:3px 3px 0 0"></div>
+        <div style="width:16px;height:86px;background:oklch(66% .08 150);border-radius:3px 3px 0 0"></div>
+        <div style="width:22px;height:32px;background:oklch(64% .08 250);border-radius:2px;transform:rotate(-12deg);transform-origin:bottom center;position:relative"></div>
+        <div style="width:14px;height:128px;background:oklch(76% .09 25);border-radius:3px 3px 0 0"></div>
+        <div style="width:15px;height:118px;background:oklch(72% .08 85);border-radius:3px 3px 0 0"></div>
+        <div style="width:17px;height:80px;background:oklch(68% .08 150);border-radius:3px 3px 0 0"></div>
+        <div style="width:16px;height:112px;background:oklch(62% .08 250);border-radius:3px 3px 0 0"></div>
+        <div style="width:18px;height:94px;background:oklch(78% .09 25);border-radius:3px 3px 0 0"></div>
+        <div style="width:16px;height:124px;background:oklch(70% .08 150);border-radius:3px 3px 0 0"></div>
+        <div style="width:15px;height:88px;background:oklch(60% .08 250);border-radius:3px 3px 0 0"></div>
+        <div style="width:18px;height:100px;background:oklch(74% .09 25);border-radius:3px 3px 0 0"></div>
+        <div style="width:15px;height:120px;background:oklch(70% .08 85);border-radius:3px 3px 0 0"></div>
+        <div style="width:16px;height:86px;background:oklch(66% .08 150);border-radius:3px 3px 0 0"></div>
+        <div style="width:22px;height:32px;background:oklch(64% .08 250);border-radius:2px;transform:rotate(-12deg);transform-origin:bottom center;position:relative"></div>
+        <div style="width:14px;height:128px;background:oklch(76% .09 25);border-radius:3px 3px 0 0"></div>
+        <div style="width:15px;height:118px;background:oklch(72% .08 85);border-radius:3px 3px 0 0"></div>
+        <div style="width:17px;height:80px;background:oklch(68% .08 150);border-radius:3px 3px 0 0"></div>
+        <div style="width:16px;height:112px;background:oklch(62% .08 250);border-radius:3px 3px 0 0"></div>
+        <div style="width:18px;height:94px;background:oklch(78% .09 25);border-radius:3px 3px 0 0"></div>
+        <div style="width:16px;height:124px;background:oklch(70% .08 150);border-radius:3px 3px 0 0"></div>
+        <div style="width:15px;height:88px;background:oklch(60% .08 250);border-radius:3px 3px 0 0"></div>
+        <div style="display:flex;flex-direction:column-reverse;gap:2px"><div style="width:60px;height:15px;background:oklch(74% .09 25);border-radius:2px"></div><div style="width:54px;height:15px;background:oklch(66% .08 150);border-radius:2px;transform:translateX(2px)"></div><div style="width:58px;height:15px;background:oklch(70% .08 85);border-radius:2px;transform:translateX(-2px)"></div></div>
+      </div>
+      <div style="position:absolute;left:0;right:0;top:204px;height:7px;z-index:0;opacity:.35;background:#c7b998"></div>
+
+      <div style="position:absolute;left:20px;right:20px;top:220px;height:148px;z-index:0;display:flex;align-items:flex-end;justify-content:flex-start;opacity:0.26;gap:2px">
+        <div style="width:17px;height:106px;background:oklch(70% .09 150);border-radius:3px 3px 0 0"></div>
+        <div style="width:19px;height:128px;background:oklch(66% .09 250);border-radius:3px 3px 0 0"></div>
+        <div style="width:15px;height:88px;background:oklch(76% .1 25);border-radius:3px 3px 0 0"></div>
+        <div style="width:18px;height:132px;background:oklch(72% .08 85);border-radius:3px 3px 0 0"></div>
+        <div style="display:flex;flex-direction:column-reverse;gap:2px"><div style="width:70px;height:16px;background:oklch(72% .08 85);border-radius:2px;transform:translateX(-2px)"></div><div style="width:64px;height:16px;background:oklch(66% .09 150);border-radius:2px;transform:translateX(3px)"></div><div style="width:74px;height:16px;background:oklch(60% .08 250);border-radius:2px;transform:translateX(-2px)"></div></div>
+        <div style="width:16px;height:96px;background:oklch(64% .09 150);border-radius:3px 3px 0 0"></div>
+        <div style="width:15px;height:120px;background:oklch(78% .09 25);border-radius:3px 3px 0 0"></div>
+        <div style="width:20px;height:26px;background:oklch(70% .08 85);border-radius:2px;transform:rotate(10deg);position:relative"></div>
+        <div style="width:17px;height:130px;background:oklch(62% .09 250);border-radius:3px 3px 0 0"></div>
+        <div style="width:16px;height:100px;background:oklch(74% .08 150);border-radius:3px 3px 0 0"></div>
+        <div style="width:17px;height:106px;background:oklch(70% .09 150);border-radius:3px 3px 0 0"></div>
+        <div style="width:19px;height:128px;background:oklch(66% .09 250);border-radius:3px 3px 0 0"></div>
+        <div style="width:15px;height:88px;background:oklch(76% .1 25);border-radius:3px 3px 0 0"></div>
+        <div style="width:18px;height:132px;background:oklch(72% .08 85);border-radius:3px 3px 0 0"></div>
+        <div style="display:flex;flex-direction:column-reverse;gap:2px"><div style="width:70px;height:16px;background:oklch(72% .08 85);border-radius:2px;transform:translateX(-2px)"></div><div style="width:64px;height:16px;background:oklch(66% .09 150);border-radius:2px;transform:translateX(3px)"></div><div style="width:74px;height:16px;background:oklch(60% .08 250);border-radius:2px;transform:translateX(-2px)"></div></div>
+        <div style="width:16px;height:96px;background:oklch(64% .09 150);border-radius:3px 3px 0 0"></div>
+        <div style="width:15px;height:120px;background:oklch(78% .09 25);border-radius:3px 3px 0 0"></div>
+        <div style="width:20px;height:26px;background:oklch(70% .08 85);border-radius:2px;transform:rotate(10deg);position:relative"></div>
+        <div style="width:17px;height:130px;background:oklch(62% .09 250);border-radius:3px 3px 0 0"></div>
+        <div style="width:16px;height:100px;background:oklch(74% .08 150);border-radius:3px 3px 0 0"></div>
+        <div style="width:17px;height:106px;background:oklch(70% .09 150);border-radius:3px 3px 0 0"></div>
+        <div style="width:19px;height:128px;background:oklch(66% .09 250);border-radius:3px 3px 0 0"></div>
+        <div style="width:15px;height:88px;background:oklch(76% .1 25);border-radius:3px 3px 0 0"></div>
+        <div style="width:18px;height:132px;background:oklch(72% .08 85);border-radius:3px 3px 0 0"></div>
+        <div style="display:flex;flex-direction:column-reverse;gap:2px"><div style="width:70px;height:16px;background:oklch(72% .08 85);border-radius:2px;transform:translateX(-2px)"></div><div style="width:64px;height:16px;background:oklch(66% .09 150);border-radius:2px;transform:translateX(3px)"></div><div style="width:74px;height:16px;background:oklch(60% .08 250);border-radius:2px;transform:translateX(-2px)"></div></div>
+        <div style="width:16px;height:96px;background:oklch(64% .09 150);border-radius:3px 3px 0 0"></div>
+        <div style="width:15px;height:120px;background:oklch(78% .09 25);border-radius:3px 3px 0 0"></div>
+        <div style="width:20px;height:26px;background:oklch(70% .08 85);border-radius:2px;transform:rotate(10deg);position:relative"></div>
+        <div style="width:17px;height:130px;background:oklch(62% .09 250);border-radius:3px 3px 0 0"></div>
+        <div style="width:16px;height:100px;background:oklch(74% .08 150);border-radius:3px 3px 0 0"></div>
+        <div style="width:17px;height:106px;background:oklch(70% .09 150);border-radius:3px 3px 0 0"></div>
+        <div style="width:19px;height:128px;background:oklch(66% .09 250);border-radius:3px 3px 0 0"></div>
+        <div style="width:15px;height:88px;background:oklch(76% .1 25);border-radius:3px 3px 0 0"></div>
+        <div style="width:18px;height:132px;background:oklch(72% .08 85);border-radius:3px 3px 0 0"></div>
+        <div style="display:flex;flex-direction:column-reverse;gap:2px"><div style="width:70px;height:16px;background:oklch(72% .08 85);border-radius:2px;transform:translateX(-2px)"></div><div style="width:64px;height:16px;background:oklch(66% .09 150);border-radius:2px;transform:translateX(3px)"></div><div style="width:74px;height:16px;background:oklch(60% .08 250);border-radius:2px;transform:translateX(-2px)"></div></div>
+        <div style="width:16px;height:96px;background:oklch(64% .09 150);border-radius:3px 3px 0 0"></div>
+        <div style="width:15px;height:120px;background:oklch(78% .09 25);border-radius:3px 3px 0 0"></div>
+        <div style="width:20px;height:26px;background:oklch(70% .08 85);border-radius:2px;transform:rotate(10deg);position:relative"></div>
+        <div style="width:17px;height:130px;background:oklch(62% .09 250);border-radius:3px 3px 0 0"></div>
+        <div style="width:16px;height:100px;background:oklch(74% .08 150);border-radius:3px 3px 0 0"></div>
+        <div style="display:flex;flex-direction:column-reverse;gap:2px"><div style="width:58px;height:15px;background:oklch(78% .09 25);border-radius:2px"></div><div style="width:52px;height:15px;background:oklch(66% .09 150);border-radius:2px;transform:translateX(2px)"></div><div style="width:56px;height:15px;background:oklch(70% .08 85);border-radius:2px;transform:translateX(-2px)"></div></div>
+      </div>
+      <div style="position:absolute;left:0;right:0;top:368px;height:7px;z-index:0;opacity:.35;background:#c7b998"></div>
+
+      <div style="position:absolute;left:20px;right:20px;top:384px;height:124px;z-index:0;display:flex;align-items:flex-end;justify-content:flex-start;opacity:0.26;gap:2px">
+        <div style="width:18px;height:88px;background:oklch(74% .09 85);border-radius:3px 3px 0 0"></div>
+        <div style="width:15px;height:110px;background:oklch(68% .08 150);border-radius:3px 3px 0 0"></div>
+        <div style="width:22px;height:30px;background:oklch(62% .09 250);border-radius:2px;transform:rotate(14deg);transform-origin:bottom center;position:relative"></div>
+        <div style="width:17px;height:114px;background:oklch(76% .09 25);border-radius:3px 3px 0 0"></div>
+        <div style="width:15px;height:84px;background:oklch(70% .08 85);border-radius:3px 3px 0 0"></div>
+        <div style="width:18px;height:104px;background:oklch(66% .09 150);border-radius:3px 3px 0 0"></div>
+        <div style="width:16px;height:76px;background:oklch(60% .08 250);border-radius:3px 3px 0 0"></div>
+        <div style="width:19px;height:108px;background:oklch(78% .09 25);border-radius:3px 3px 0 0"></div>
+        <div style="width:15px;height:86px;background:oklch(72% .08 150);border-radius:3px 3px 0 0"></div>
+        <div style="width:17px;height:98px;background:oklch(64% .08 250);border-radius:3px 3px 0 0"></div>
+        <div style="width:18px;height:88px;background:oklch(74% .09 85);border-radius:3px 3px 0 0"></div>
+        <div style="width:15px;height:110px;background:oklch(68% .08 150);border-radius:3px 3px 0 0"></div>
+        <div style="width:22px;height:30px;background:oklch(62% .09 250);border-radius:2px;transform:rotate(14deg);transform-origin:bottom center;position:relative"></div>
+        <div style="width:17px;height:114px;background:oklch(76% .09 25);border-radius:3px 3px 0 0"></div>
+        <div style="width:15px;height:84px;background:oklch(70% .08 85);border-radius:3px 3px 0 0"></div>
+        <div style="width:18px;height:104px;background:oklch(66% .09 150);border-radius:3px 3px 0 0"></div>
+        <div style="width:16px;height:76px;background:oklch(60% .08 250);border-radius:3px 3px 0 0"></div>
+        <div style="width:19px;height:108px;background:oklch(78% .09 25);border-radius:3px 3px 0 0"></div>
+        <div style="width:15px;height:86px;background:oklch(72% .08 150);border-radius:3px 3px 0 0"></div>
+        <div style="width:17px;height:98px;background:oklch(64% .08 250);border-radius:3px 3px 0 0"></div>
+        <div style="width:18px;height:88px;background:oklch(74% .09 85);border-radius:3px 3px 0 0"></div>
+        <div style="width:15px;height:110px;background:oklch(68% .08 150);border-radius:3px 3px 0 0"></div>
+        <div style="width:22px;height:30px;background:oklch(62% .09 250);border-radius:2px;transform:rotate(14deg);transform-origin:bottom center;position:relative"></div>
+        <div style="width:17px;height:114px;background:oklch(76% .09 25);border-radius:3px 3px 0 0"></div>
+        <div style="width:15px;height:84px;background:oklch(70% .08 85);border-radius:3px 3px 0 0"></div>
+        <div style="width:18px;height:104px;background:oklch(66% .09 150);border-radius:3px 3px 0 0"></div>
+        <div style="width:16px;height:76px;background:oklch(60% .08 250);border-radius:3px 3px 0 0"></div>
+        <div style="width:19px;height:108px;background:oklch(78% .09 25);border-radius:3px 3px 0 0"></div>
+        <div style="width:15px;height:86px;background:oklch(72% .08 150);border-radius:3px 3px 0 0"></div>
+        <div style="width:17px;height:98px;background:oklch(64% .08 250);border-radius:3px 3px 0 0"></div>
+        <div style="width:18px;height:88px;background:oklch(74% .09 85);border-radius:3px 3px 0 0"></div>
+        <div style="width:15px;height:110px;background:oklch(68% .08 150);border-radius:3px 3px 0 0"></div>
+        <div style="width:22px;height:30px;background:oklch(62% .09 250);border-radius:2px;transform:rotate(14deg);transform-origin:bottom center;position:relative"></div>
+        <div style="width:17px;height:114px;background:oklch(76% .09 25);border-radius:3px 3px 0 0"></div>
+        <div style="width:15px;height:84px;background:oklch(70% .08 85);border-radius:3px 3px 0 0"></div>
+        <div style="width:18px;height:104px;background:oklch(66% .09 150);border-radius:3px 3px 0 0"></div>
+        <div style="width:16px;height:76px;background:oklch(60% .08 250);border-radius:3px 3px 0 0"></div>
+        <div style="width:19px;height:108px;background:oklch(78% .09 25);border-radius:3px 3px 0 0"></div>
+        <div style="width:15px;height:86px;background:oklch(72% .08 150);border-radius:3px 3px 0 0"></div>
+        <div style="width:17px;height:98px;background:oklch(64% .08 250);border-radius:3px 3px 0 0"></div>
+        <div style="display:flex;flex-direction:column-reverse;gap:2px"><div style="width:60px;height:15px;background:oklch(78% .09 25);border-radius:2px"></div><div style="width:54px;height:15px;background:oklch(68% .08 150);border-radius:2px;transform:translateX(2px)"></div><div style="width:58px;height:15px;background:oklch(62% .09 250);border-radius:2px;transform:translateX(-2px)"></div></div>
+        <div style="width:18px;height:92px;background:oklch(74% .09 85);border-radius:3px 3px 0 0"></div>
+        <div style="width:16px;height:112px;background:oklch(66% .09 150);border-radius:3px 3px 0 0"></div>
+        <div style="width:15px;height:80px;background:oklch(60% .08 250);border-radius:3px 3px 0 0"></div>
+        <div style="width:17px;height:104px;background:oklch(76% .09 25);border-radius:3px 3px 0 0"></div>
+        <div style="width:16px;height:90px;background:oklch(70% .08 85);border-radius:3px 3px 0 0"></div>
+      </div>
+      <div style="position:absolute;left:0;right:0;top:508px;height:7px;z-index:0;opacity:.35;background:#c7b998"></div>
+    `;
+
+    const styleFromText = (css) => {
+      const obj = {};
+      css.split(';').forEach(rule => {
+        const idx = rule.indexOf(':');
+        if (idx === -1) return;
+        const prop = rule.slice(0, idx).trim();
+        const val = rule.slice(idx + 1).trim();
+        if (!prop || !val) return;
+        obj[prop.replace(/-([a-z])/g, (_, c) => c.toUpperCase())] = val;
+      });
+      return obj;
+    };
+
+    /* 🌟 本の背表紙：押した瞬間→浮き上がる→ページがめくれて開く、の3段階アニメーション */
+    const spineWrapStyle = (phase, pressedGrade, g) => {
+      if (pressedGrade !== g) {
+        return 'transform:scale(1);transition:transform .15s ease;position:relative';
+      }
+      if (phase === 'pressing') {
+        return 'transform:scale(0.94);transition:transform .15s ease;transform-origin:center bottom;position:relative';
+      }
+      if (phase === 'cover') {
+        return 'transform:scale(1.22) translateY(-10px);transition:transform .3s cubic-bezier(.25,.8,.3,1);transform-origin:center bottom;z-index:5;position:relative;box-shadow:0 28px 46px rgba(0,0,0,.32)';
+      }
+      if (phase === 'opening') {
+        return 'transform:scale(1.22) translateY(-10px);opacity:0;transition:opacity .15s ease;transform-origin:center bottom;z-index:5;position:relative';
+      }
+      return 'transform:scale(1);transition:transform .15s ease;position:relative';
+    };
+
+    const screenStripStyle = (phase, index, total) => {
+      const delay = (total - 1 - index) * 30;
+      const color = index % 2 === 0 ? '#fffdf7' : '#f7f1e4';
+      const base = `position:absolute;top:0;bottom:0;left:${(index * 100) / total}%;width:${100 / total}%;background:${color};background-image:linear-gradient(90deg,rgba(0,0,0,.1),transparent 30%,transparent 70%,rgba(255,255,255,.5));transform-origin:left center;backface-visibility:hidden;box-shadow:2px 0 5px rgba(0,0,0,.15);border-radius:0 6px 6px 0;pointer-events:none;z-index:20;`;
+      if (phase !== 'opening') {
+        return base + 'opacity:0;transform:rotateY(-140deg) skewY(1deg);transition:none';
+      }
+      return base + `opacity:1;transform:rotateY(0deg) skewY(0deg);transition:transform .2s cubic-bezier(.45,.35,.2,1) ${delay}ms,opacity 1ms linear ${delay}ms`;
+    };
+
+    const gradeOverlayStyle = (phase) => {
+      if (phase === 'opening') {
+        return 'position:absolute;inset:0;background:#fff;opacity:1;transition:opacity .2s ease .34s;z-index:25;pointer-events:none';
+      }
+      return 'position:absolute;inset:0;background:#fff;opacity:0;transition:opacity .25s ease;z-index:7;pointer-events:none';
+    };
+
+    const App = () => {
+      const [view, setView] = useState('grade');
+      const [activeGrade, setActiveGrade] = useState(null);
+      const [activeUnit, setActiveUnit] = useState(null);
+      const [showGridMenu, setShowGridMenu] = useState(false);
+      const [rawData, setRawData] = useState([]);
+      const [loading, setLoading] = useState(true);
+      const [error, setError] = useState(null);
+      const [uiPhase, setUiPhase] = useState('idle');
+      const [pressedGrade, setPressedGrade] = useState(null);
+      const [showTerms, setShowTerms] = useState(false);
+      const [gradeScale, setGradeScale] = useState(1);
+
+      useEffect(() => {
+        const computeScale = () => {
+          const w = document.documentElement.clientWidth || window.innerWidth;
+          const h = document.documentElement.clientHeight || window.innerHeight;
+          setGradeScale(Math.min(w / DESIGN_W, h / DESIGN_H));
+        };
+        computeScale();
+        window.addEventListener('resize', computeScale);
+        const ro = new ResizeObserver(computeScale);
+        ro.observe(document.documentElement);
+        const retry = setTimeout(computeScale, 300);
+        return () => {
+          window.removeEventListener('resize', computeScale);
+          ro.disconnect();
+          clearTimeout(retry);
+        };
+      }, []);
+
+      const pressGrade = (g) => {
+        if (uiPhase !== 'idle') return;
+        setPressedGrade(g);
+        setUiPhase('pressing');
+        setTimeout(() => {
+          setUiPhase('cover');
+          setTimeout(() => {
+            setUiPhase('opening');
+            setTimeout(() => {
+              setActiveGrade(g);
+              setView('home');
+              setUiPhase('idle');
+              setPressedGrade(null);
+            }, 480);
+          }, 380);
+        }, 130);
+      };
+
+      useEffect(() => {
+        google.script.run
+          .withSuccessHandler(data => { 
+            setRawData(data); 
+            setLoading(false); 
+          })
+          .withFailureHandler(err => {
+            setError(err.message || String(err));
+            setLoading(false);
+          })
+          .getSheetData();
+      }, []);
+
+      if (loading) return <div className="min-h-screen flex items-center justify-center font-black text-slate-400 italic">LOADING...</div>;
+
+      if (error) return (
+        <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-red-50 text-red-700 font-bold">
+          <p className="text-2xl mb-4">⚠️ 読み込みエラーが発生しました</p>
+          <p className="bg-white p-4 rounded-xl border border-red-200 shadow-sm font-mono text-sm max-w-lg w-full break-all">
+            {error}
+          </p>
+          <button onClick={() => window.location.reload()} className="mt-6 px-6 py-2 bg-red-600 text-white rounded-lg active:scale-95 shadow-md">
+            再読み込み
+          </button>
+        </div>
+      );
+
+      /* 🌟 画面管理ステートの分岐 */
+      if (view === 'about') {
+        return <AboutPage onBack={() => setView('grade')} />;
+      }
+
+      if (view === 'grade') {
+        const availableGrades = [...new Set(rawData.map(d => d.grade))].sort();
+        return (
+          <div
+            style={{
+              position: 'fixed',
+              inset: 0,
+              overflow: 'hidden',
+              background: 'linear-gradient(120deg, oklch(96% .03 300) 0%, oklch(96% .03 160) 35%, oklch(96% .04 60) 70%, oklch(96% .03 30) 100%)'
+            }}
+          >
+            <div style={{ position: 'absolute', inset: 0, zIndex: 0 }} dangerouslySetInnerHTML={{ __html: BOOKSHELF_BG_HTML }} />
+          <div
+            className="flex flex-col gap-3"
+            style={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              width: DESIGN_W + 'px',
+              height: DESIGN_H + 'px',
+              transform: `translate(-50%, -50%) scale(${gradeScale})`,
+              transformOrigin: 'center center',
+              padding: '24px 34px 0'
+            }}
+          >
+              {/* 🌟 最初の画面（学年選択）の右上に配置する控えめなボタン */}
+              <div style={{ display: 'flex', justifyContent: 'flex-end', position: 'relative', zIndex: 1 }}>
+                <button
+                  onClick={() => setView('about')}
+                  style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '8px 16px', background: '#fff', border: '1px solid #e5e1d8', color: '#55524c', fontWeight: 700, borderRadius: '999px', boxShadow: '0 1px 2px rgba(0,0,0,.14)', fontSize: '13px', cursor: 'pointer' }}
+                >
+                  <span style={{ color: 'oklch(48% .12 260)', fontWeight: 700 }}>？</span>
+                  <span>この教材について</span>
+                </button>
+              </div>
+
+              {/* 🌟 本棚から学年（本）を選ぶUI。タップすると本が浮き上がり、開くように「home」画面へ遷移する */}
+              <div className="flex-1 flex items-end justify-center gap-4 md:gap-6 flex-wrap pt-6 relative z-10">
+                {availableGrades.map((g, i) => {
+                  const c = GRADE_PALETTE[i % GRADE_PALETTE.length];
+                  const digit = (g.match(/\d/) || [''])[0];
+                  return (
+                    <div
+                      key={g}
+                      onClick={() => pressGrade(g)}
+                      style={{ cursor: 'pointer', perspective: '900px', ...styleFromText(spineWrapStyle(uiPhase, pressedGrade, g)) }}
+                    >
+                      <div
+                        style={{
+                          width: '112px',
+                          height: c.height + 'px',
+                          background: `linear-gradient(100deg, color-mix(in oklch, ${c.base} 60%, white) 0%, ${c.base} 16%, ${c.base} 78%, ${c.dark} 100%)`,
+                          borderRadius: '4px 10px 10px 4px',
+                          boxShadow: '0 16px 26px rgba(0,0,0,.22), inset -6px 0 10px rgba(0,0,0,.14)',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          alignItems: 'center',
+                          position: 'relative'
+                        }}
+                      >
+                        <div style={{ position: 'absolute', inset: '5px', border: '2px solid rgba(255,214,120,.75)', borderRadius: '2px 8px 8px 2px', pointerEvents: 'none' }} />
+                        <div style={{ position: 'absolute', top: '-10%', left: '-20%', width: '70%', height: '45%', background: 'linear-gradient(120deg, rgba(255,255,255,.55), rgba(255,255,255,0) 70%)', borderRadius: '50%', pointerEvents: 'none' }} />
+                        <div style={{ width: '70%', height: '4px', background: 'rgba(255,255,255,.6)', borderRadius: '2px', marginTop: '20px' }} />
+                        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                          <div style={{ width: '84px', height: '84px', borderRadius: '50%', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 10px rgba(0,0,0,.18)' }}>
+                            <div className="round-font" style={{ fontWeight: 800, fontSize: '52px', color: c.dark, lineHeight: 1 }}>{digit}</div>
+                          </div>
+                          <div className="round-font" style={{ color: '#fff', fontSize: '15px', fontWeight: 700, textShadow: '0 2px 0 rgba(0,0,0,.15)' }}>ねんせい</div>
+                        </div>
+                        <div style={{ width: '70%', height: '4px', background: 'rgba(255,255,255,.6)', borderRadius: '2px', marginBottom: '16px' }} />
+                        <div style={{ position: 'absolute', right: 0, top: 0, bottom: 0, width: '9px', background: c.dark, opacity: .55, borderRadius: '0 10px 10px 0' }} />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              <div style={{ padding: '14px 8px 18px', textAlign: 'center', position: 'relative', zIndex: 1 }}>
+                <p style={{ fontSize: '11px', lineHeight: 1.6, color: '#948f84', margin: '0 0 8px', maxWidth: '560px', marginInline: 'auto' }}>
+                  本教材のイラストは、生成AI（Google Gemini）を用いて制作しています。動画についても一部、生成AIで作成したものを使用しています。使用素材に関する詳細は、教育委員会にて一元管理しています。
+                </p>
+                <a
+                  href="#"
+                  onClick={(e) => { e.preventDefault(); setShowTerms(true); }}
+                  style={{ fontSize: '12px', color: '#948f84', textDecoration: 'underline' }}
+                >ご利用にあたっての注意事項はこちら</a>
+              </div>
+          </div>
+
+            {/* 🌟 本が開く瞬間の「ページがめくれる」演出。画面全体を覆うよう、拡大表示ステージの外（画面座標基準）に配置 */}
+            {[0, 1, 2, 3, 4, 5, 6, 7].map(i => (
+              <div key={i} style={styleFromText(screenStripStyle(uiPhase, i, 8))} />
+            ))}
+            <div style={styleFromText(gradeOverlayStyle(uiPhase))} />
+
+            {showTerms && (
+              <div className="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-md p-6 flex items-center justify-center" onClick={() => setShowTerms(false)}>
+                <div className="bg-white w-full max-w-lg rounded-[2rem] shadow-2xl overflow-hidden flex flex-col max-h-[85vh]" onClick={(e) => e.stopPropagation()}>
+                  <div className="p-6 border-b flex justify-between items-center bg-slate-50">
+                    <h2 className="text-lg font-black text-slate-800">ご利用にあたっての注意事項</h2>
+                    <button onClick={() => setShowTerms(false)} className="p-2.5 bg-slate-200 rounded-full active:scale-95"><Icons.X /></button>
+                  </div>
+                  <div className="flex-1 overflow-y-auto p-6">
+                    <p className="text-sm font-medium text-slate-500 leading-relaxed text-left">
+                      ・本教材は美濃加茂市教育委員会が市内小学校向けに提供するものです。市外へURL等を共有し、利用可能な状態にすることはできません（教材の存在を紹介すること自体は問題ありません）<br/><br/>
+                      ・写真・イラスト・動画をダウンロードし、他の教材などへ転用することは禁止します。<br/><br/>
+                      ・授業の様子をホームページ等で紹介する際は、本画面が映り込まないようご注意ください。
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+          </div>
+        );
+      }
+
+
+      if (view === 'home') {
+        const gradeUnits = rawData.filter(d => d.grade === activeGrade).reduce((acc, curr) => {
+          if (!acc.find(u => u.unitId === curr.unitId)) acc.push({ unitId: curr.unitId, unitRuby: curr.unitRuby });
+          return acc;
+        }, []);
+
+        return (
+          <div className="min-h-screen p-6 bg-slate-50">
+            <button onClick={() => setView('grade')} className="mb-8 p-4 bg-white rounded-full shadow-md"><Icons.Back /></button>
+            <div className="grid grid-cols-1 gap-6 max-w-4xl mx-auto">
+              {gradeUnits.map(unit => (
+                <button key={unit.unitId} onClick={() => { setActiveUnit(unit.unitId); setView('unit'); }} className="bg-white p-12 rounded-[2.5rem] shadow-lg text-left active:scale-[0.98] border-b-8 border-indigo-100">
+                  <h3 className="text-4xl font-black text-slate-800"><Ruby t={unit.unitId} r={unit.unitRuby} /></h3>
+                </button>
+              ))}
+            </div>
+          </div>
+        );
+      }
+
+      const activeItems = rawData.filter(d => d.grade === activeGrade && d.unitId === activeUnit).sort((a, b) => (Number(a.orderNo) || 0) - (Number(b.orderNo) || 0));
+
+      return (
+        <div className="min-h-screen pb-20 bg-slate-50">
+          <div className="sticky top-0 z-40 bg-white/90 backdrop-blur-xl border-b p-4 flex justify-between items-center px-8">
+            <button onClick={() => setView('home')} className="p-3 bg-slate-100 rounded-full"><Icons.Back /></button>
+            <button onClick={() => setShowGridMenu(true)} className="flex items-center gap-2 px-8 py-3 bg-indigo-500 text-white rounded-2xl font-black shadow-lg shadow-indigo-200">
+              <Icons.Grid /><span>もくじ</span>
+            </button>
+          </div>
+
+          {showGridMenu && (
+            <div className="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-md p-6 flex items-center justify-center">
+              <div className="bg-white w-full max-w-2xl rounded-[3rem] shadow-2xl overflow-hidden flex flex-col max-h-[85vh]">
+                <div className="p-8 border-b flex justify-between items-center bg-slate-50">
+                  <h2 className="text-2xl font-black text-slate-800">もくじ</h2>
+                  <button onClick={() => setShowGridMenu(false)} className="p-3 bg-slate-200 rounded-full"><Icons.X /></button>
+                </div>
+                <div className="flex-1 overflow-y-auto p-8 grid grid-cols-2 gap-4">
+                  {activeItems.map((item, idx) => {
+                    let displayWord = item.word || "・";
+                    if (typeof displayWord === 'string' && (displayWord.includes('<') || displayWord.includes('&lt;'))) {
+                      let temp = displayWord.replace(/<rt>[\s\S]*?<\/rt>/gi, '').replace(/&lt;rt&gt;[\s\S]*?&lt;\/rt&gt;/gi, '');
+                      displayWord = temp.replace(/<[^>]*>/g, '').replace(/&lt;[^&]*&gt;/g, '');
+                    }
+                    return (
+                      <button key={idx} onClick={() => { document.getElementById(`word-${idx}`).scrollIntoView({behavior:'smooth'}); setShowGridMenu(false); }} className="p-6 rounded-2xl border-2 border-slate-100 text-center font-black text-slate-800 active:bg-indigo-50">
+                        {displayWord}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          )}
+
+          <div className="max-w-5xl mx-auto p-6 mt-8">
+            <h2 className="text-5xl font-black text-slate-900 mb-12 px-6 border-l-8 border-indigo-500">
+              <Ruby t={activeUnit} r={activeItems[0]?.unitRuby} />
+            </h2>
+            {activeItems.map((item, i) => <WordCard key={i} item={item} index={i} />)}
+          </div>
+        </div>
+      );
+    };
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>
