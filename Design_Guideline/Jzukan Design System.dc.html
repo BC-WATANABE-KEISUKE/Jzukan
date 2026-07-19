@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@400;600&family=Inter:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    body { margin: 0; background: #f1f5f9; font-family: "Inter", sans-serif; }
+    a { color: #6366f1; }
+    a:hover { color: #4338ca; }
+    ::selection { background: #c7d2fe; color: #1e1b4b; }
+  </style>
+</helmet>
+
+<div style="min-height:100vh;">
+
+  <div style="position:sticky;top:0;z-index:40;background:rgba(255,255,255,0.9);backdrop-filter:blur(20px);border-bottom:1px solid #e2e8f0;padding:18px 32px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <span style="font-family:'Klee One',serif;font-weight:600;font-size:24px;color:#1e293b;">にほんごずかん</span>
+      <span style="font-size:13px;font-weight:800;color:#6366f1;background:#eef2ff;padding:4px 12px;border-radius:999px;">デザインシステム</span>
+    </div>
+    <div style="display:flex;gap:18px;flex-wrap:wrap;">
+      <a href="#concept" style="font-size:13px;font-weight:800;color:#475569;text-decoration:none;">コンセプト</a>
+      <a href="#color" style="font-size:13px;font-weight:800;color:#475569;text-decoration:none;">カラー</a>
+      <a href="#type" style="font-size:13px;font-weight:800;color:#475569;text-decoration:none;">タイポグラフィ</a>
+      <a href="#shape" style="font-size:13px;font-weight:800;color:#475569;text-decoration:none;">形・余白・影</a>
+      <a href="#components" style="font-size:13px;font-weight:800;color:#475569;text-decoration:none;">コンポーネント</a>
+      <a href="#motion" style="font-size:13px;font-weight:800;color:#475569;text-decoration:none;">モーション</a>
+      <a href="#content" style="font-size:13px;font-weight:800;color:#475569;text-decoration:none;">コンテンツ</a>
+    </div>
+  </div>
+
+  <div style="max-width:1080px;margin:0 auto;padding:48px 32px 120px;display:flex;flex-direction:column;gap:64px;">
+
+    <section id="concept" style="display:flex;flex-direction:column;gap:20px;">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <span style="font-size:13px;font-weight:900;color:#6366f1;letter-spacing:0.06em;">01 · CONCEPT</span>
+      </div>
+      <h1 style="font-size:44px;font-weight:900;color:#0f172a;margin:0;line-height:1.15;letter-spacing:-0.01em;">「にほんごずかん」<br/>デザインシステム</h1>
+      <p style="font-size:17px;font-weight:700;color:#475569;line-height:1.8;max-width:680px;margin:0;">
+        外国人児童向けの国語補助教材アプリ（GAS + React、iPad想定）から、これまでの画面実装を整理してまとめたデザインシステムです。
+        「教える」から「見せる」へ ── 文化背景の違いによる「言葉のスキマ」を、1枚の写真・イラスト・短い動画で直感的に補う、という教材コンセプトに基づき、
+        すべてのビジュアルは<b style="color:#1e293b;">大きく・丸く・力強く</b>、共有iPadでの誤操作を防ぐ設計を貫いています。
+      </p>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:4px;">
+        <div style="background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:14px 20px;">
+          <div style="font-size:11px;font-weight:800;color:#94a3b8;">対象</div>
+          <div style="font-size:14px;font-weight:800;color:#1e293b;">小学校 外国人児童（美濃加茂市教育委員会）</div>
+        </div>
+        <div style="background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:14px 20px;">
+          <div style="font-size:11px;font-weight:800;color:#94a3b8;">実装</div>
+          <div style="font-size:14px;font-weight:800;color:#1e293b;">Google Apps Script + React 18 (CDN) + Tailwind</div>
+        </div>
+        <div style="background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:14px 20px;">
+          <div style="font-size:11px;font-weight:800;color:#94a3b8;">参照元</div>
+          <div style="font-size:14px;font-weight:800;color:#1e293b;">index.html / コード.js（プロジェクト添付コード）</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="color" style="display:flex;flex-direction:column;gap:20px;">
+      <span style="font-size:13px;font-weight:900;color:#6366f1;letter-spacing:0.06em;">02 · COLOR</span>
+      <h2 style="font-size:28px;font-weight:900;color:#0f172a;margin:0;">カラー</h2>
+      <p style="font-size:15px;font-weight:600;color:#64748b;line-height:1.7;margin:0;max-width:640px;">
+        画面の土台は落ち着いたスレート（slate）の中立色。学習アプリらしい信頼感を保ちつつ、主要アクションと「もくじ」ボタンのみインディゴで強調します。
+        学年（本棚）選択画面だけは、学年ごとに識別しやすいよう oklch の虹色パレットを使用します。
+      </p>
+
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div style="font-size:12px;font-weight:900;color:#94a3b8;">ニュートラル（スレート）— 背景・本文・境界線</div>
+        <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:8px;">
+          <div style="display:flex;flex-direction:column;gap:6px;"><div style="height:64px;border-radius:12px;background:#f8fafc;border:1px solid #e2e8f0;"></div><div style="font-size:11px;font-weight:800;color:#475569;">slate-50 · 背景（本文）</div></div>
+          <div style="display:flex;flex-direction:column;gap:6px;"><div style="height:64px;border-radius:12px;background:#f1f5f9;"></div><div style="font-size:11px;font-weight:800;color:#475569;">slate-100 · 全体背景</div></div>
+          <div style="display:flex;flex-direction:column;gap:6px;"><div style="height:64px;border-radius:12px;background:#e2e8f0;"></div><div style="font-size:11px;font-weight:800;color:#475569;">slate-200 · 境界線</div></div>
+          <div style="display:flex;flex-direction:column;gap:6px;"><div style="height:64px;border-radius:12px;background:#94a3b8;"></div><div style="font-size:11px;font-weight:800;color:#475569;">slate-400 · 補助文字</div></div>
+          <div style="display:flex;flex-direction:column;gap:6px;"><div style="height:64px;border-radius:12px;background:#475569;"></div><div style="font-size:11px;font-weight:800;color:#e2e8f0;">slate-600 · 本文</div></div>
+          <div style="display:flex;flex-direction:column;gap:6px;"><div style="height:64px;border-radius:12px;background:#0f172a;"></div><div style="font-size:11px;font-weight:800;color:#e2e8f0;">slate-900 · 見出し</div></div>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div style="font-size:12px;font-weight:900;color:#94a3b8;">アクセント（インディゴ）— 主要アクション・強調</div>
+        <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;">
+          <div style="display:flex;flex-direction:column;gap:6px;"><div style="height:64px;border-radius:12px;background:#eef2ff;"></div><div style="font-size:11px;font-weight:800;color:#475569;">indigo-50 · 淡色背景</div></div>
+          <div style="display:flex;flex-direction:column;gap:6px;"><div style="height:64px;border-radius:12px;background:#c7d2fe;"></div><div style="font-size:11px;font-weight:800;color:#475569;">indigo-200 · 罫線・下線</div></div>
+          <div style="display:flex;flex-direction:column;gap:6px;"><div style="height:64px;border-radius:12px;background:#818cf8;"></div><div style="font-size:11px;font-weight:800;color:#312e81;">indigo-400</div></div>
+          <div style="display:flex;flex-direction:column;gap:6px;"><div style="height:64px;border-radius:12px;background:#6366f1;"></div><div style="font-size:11px;font-weight:800;color:#312e81;">indigo-500 · 基準色</div></div>
+          <div style="display:flex;flex-direction:column;gap:6px;"><div style="height:64px;border-radius:12px;background:#4f46e5;"></div><div style="font-size:11px;font-weight:800;color:#312e81;">indigo-600 · 濃色テキスト</div></div>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div style="font-size:12px;font-weight:900;color:#94a3b8;">セマンティック — 情報の性質を伝える色</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;">
+          <div style="display:flex;flex-direction:column;gap:6px;"><div style="height:56px;border-radius:12px;background:#f43f5e;"></div><div style="font-size:11px;font-weight:800;color:#475569;">rose-500 · 「あえて収録していない」注意喚起</div></div>
+          <div style="display:flex;flex-direction:column;gap:6px;"><div style="height:56px;border-radius:12px;background:#fef2f2;border:1px solid #fecaca;"></div><div style="font-size:11px;font-weight:800;color:#475569;">red-50 · エラー画面背景</div></div>
+          <div style="display:flex;flex-direction:column;gap:6px;"><div style="height:56px;border-radius:12px;background:#0f172a;opacity:0.8;"></div><div style="font-size:11px;font-weight:800;color:#475569;">slate-900/80 · モーダル背景（ぼかし）</div></div>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div style="font-size:12px;font-weight:900;color:#94a3b8;">学年パレット（学年選択画面の本の背表紙、oklchで生成）</div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;">
+          <div style="display:flex;flex-direction:column;gap:6px;"><div style="height:56px;border-radius:12px;background:oklch(66% .18 25);"></div><div style="font-size:10px;font-weight:800;color:#475569;">2ねんせい<br/>oklch(66% .18 25)</div></div>
+          <div style="display:flex;flex-direction:column;gap:6px;"><div style="height:56px;border-radius:12px;background:oklch(82% .19 96);"></div><div style="font-size:10px;font-weight:800;color:#475569;">3ねんせい<br/>oklch(82% .19 96)</div></div>
+          <div style="display:flex;flex-direction:column;gap:6px;"><div style="height:56px;border-radius:12px;background:oklch(66% .15 150);"></div><div style="font-size:10px;font-weight:800;color:#475569;">4ねんせい<br/>oklch(66% .15 150)</div></div>
+          <div style="display:flex;flex-direction:column;gap:6px;"><div style="height:56px;border-radius:12px;background:oklch(60% .13 250);"></div><div style="font-size:10px;font-weight:800;color:#475569;">5ねんせい<br/>oklch(60% .13 250)</div></div>
+        </div>
+        <p style="font-size:13px;font-weight:600;color:#64748b;line-height:1.7;margin:4px 0 0;">各色は明るい base と濃い dark の2段階で構成し、本の背表紙のグラデーション（<code style="background:#f1f5f9;padding:2px 6px;border-radius:6px;">linear-gradient(100deg, base 60%→white 0%, base 16%, base 78%, dark 100%)</code>）と縁取りに使用。学年選択画面の背景自体は全学年色を薄く混ぜた <code style="background:#f1f5f9;padding:2px 6px;border-radius:6px;">oklch(96% .03 *)</code> の淡いグラデーションです。</p>
+      </div>
+    </section>
+
+    <section id="type" style="display:flex;flex-direction:column;gap:20px;">
+      <span style="font-size:13px;font-weight:900;color:#6366f1;letter-spacing:0.06em;">03 · TYPOGRAPHY</span>
+      <h2 style="font-size:28px;font-weight:900;color:#0f172a;margin:0;">タイポグラフィ</h2>
+      <p style="font-size:15px;font-weight:600;color:#64748b;line-height:1.7;margin:0;max-width:640px;">
+        単語カードの見出し（ふりがな付き）は手書き風で親しみやすい「クレー One」。それ以外のUI（ボタン・見出し・本文）はシステムのsans-serifで、太いウェイト（font-black / font-extrabold）を多用し、子どもにもはっきり読めるようにしています。
+      </p>
+
+      <div style="background:#fff;border:1px solid #e2e8f0;border-radius:24px;padding:32px;display:flex;flex-direction:column;gap:8px;">
+        <div style="font-size:12px;font-weight:900;color:#94a3b8;">見出し書体 — Klee One（ふりがな・単語ラベル専用）</div>
+        <div style="display:flex;align-items:baseline;gap:4px;font-family:'Klee One',serif;">
+          <span style="display:inline-flex;flex-direction:column;align-items:center;"><span style="font-size:15px;font-weight:600;color:#6366f1;">せんぞ</span><span style="font-size:44px;font-weight:600;color:#1e293b;">先祖</span></span>
+        </div>
+        <div style="font-size:13px;font-weight:600;color:#94a3b8;">ルビ（ふりがな）は自動で漢字部分にだけ振られる独自の対応アルゴリズムを使用</div>
+      </div>
+
+      <div style="background:#fff;border:1px solid #e2e8f0;border-radius:24px;padding:32px;display:flex;flex-direction:column;gap:16px;">
+        <div style="font-size:12px;font-weight:900;color:#94a3b8;">UI書体 — Sans-serif（極太ウェイト中心）</div>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <div style="font-size:36px;font-weight:900;color:#0f172a;">見出し 900 / 36px</div>
+          <div style="font-size:24px;font-weight:900;color:#0f172a;">単元見出し 900 / 24px</div>
+          <div style="font-size:18px;font-weight:800;color:#1e293b;">本文（意味説明）800 / 18px</div>
+          <div style="font-size:14px;font-weight:700;color:#475569;">サブ・補助テキスト 700 / 14px</div>
+          <div style="font-size:11px;font-weight:600;color:#94a3b8;">注記・免責文 600 / 11px</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="shape" style="display:flex;flex-direction:column;gap:20px;">
+      <span style="font-size:13px;font-weight:900;color:#6366f1;letter-spacing:0.06em;">04 · SHAPE, SPACE &amp; ELEVATION</span>
+      <h2 style="font-size:28px;font-weight:900;color:#0f172a;margin:0;">角丸・余白・影</h2>
+      <p style="font-size:15px;font-weight:600;color:#64748b;line-height:1.7;margin:0;max-width:640px;">
+        カード・ボタンともに大きな角丸を採用し、iPadでタップする対象であることを視覚的に示します。ボタンは基本的に <b>rounded-full</b>（丸ボタン/ピル型）、カード・モーダルは 2〜3rem の大きな角丸です。
+      </p>
+      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:8px;"><div style="width:100%;height:60px;background:#eef2ff;border-radius:12px;"></div><div style="font-size:11px;font-weight:800;color:#475569;">0.75rem</div></div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:8px;"><div style="width:100%;height:60px;background:#eef2ff;border-radius:16px;"></div><div style="font-size:11px;font-weight:800;color:#475569;">1rem</div></div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:8px;"><div style="width:100%;height:60px;background:#eef2ff;border-radius:24px;"></div><div style="font-size:11px;font-weight:800;color:#475569;">1.5rem・カード</div></div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:8px;"><div style="width:100%;height:60px;background:#eef2ff;border-radius:32px;"></div><div style="font-size:11px;font-weight:800;color:#475569;">2rem・単語カード</div></div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:8px;"><div style="width:100%;height:60px;background:#eef2ff;border-radius:999px;"></div><div style="font-size:11px;font-weight:800;color:#475569;">full・ボタン</div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:8px;">
+        <div style="background:#fff;border-radius:20px;padding:20px;box-shadow:0 1px 3px rgba(0,0,0,0.08);"><div style="font-size:12px;font-weight:900;color:#94a3b8;">shadow-md</div><div style="font-size:12px;font-weight:600;color:#64748b;margin-top:4px;">単元カード・小コンポーネント</div></div>
+        <div style="background:#fff;border-radius:20px;padding:20px;box-shadow:0 10px 24px rgba(0,0,0,0.10);"><div style="font-size:12px;font-weight:900;color:#94a3b8;">shadow-lg</div><div style="font-size:12px;font-weight:600;color:#64748b;margin-top:4px;">単語カード・主要ボタン</div></div>
+        <div style="background:#fff;border-radius:20px;padding:20px;box-shadow:0 25px 50px rgba(0,0,0,0.22);"><div style="font-size:12px;font-weight:900;color:#94a3b8;">shadow-2xl</div><div style="font-size:12px;font-weight:600;color:#64748b;margin-top:4px;">モーダル（もくじ・注意事項）</div></div>
+      </div>
+    </section>
+
+    <section id="components" style="display:flex;flex-direction:column;gap:24px;">
+      <span style="font-size:13px;font-weight:900;color:#6366f1;letter-spacing:0.06em;">05 · COMPONENTS</span>
+      <h2 style="font-size:28px;font-weight:900;color:#0f172a;margin:0;">コンポーネント</h2>
+
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <div style="font-size:14px;font-weight:900;color:#1e293b;">ボタン</div>
+        <div style="display:flex;gap:14px;flex-wrap:wrap;align-items:center;">
+          <div style="padding:12px 32px;background:#6366f1;color:#fff;border-radius:16px;font-weight:900;box-shadow:0 8px 20px rgba(99,102,241,0.35);display:flex;align-items:center;gap:8px;">▦ もくじ</div>
+          <div style="width:52px;height:52px;background:#f1f5f9;border-radius:999px;display:flex;align-items:center;justify-content:center;font-weight:900;color:#475569;">←</div>
+          <div style="padding:8px 16px;background:#fff;border:1px solid #e5e1d8;border-radius:999px;font-weight:700;font-size:13px;color:#55524c;box-shadow:0 1px 2px rgba(0,0,0,0.14);">？ この教材について</div>
+        </div>
+        <div style="font-size:12px;font-weight:600;color:#94a3b8;">押下時は active:scale-95（わずかに縮む）でフィードバック。角丸は用途を問わず基本 full。</div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <div style="font-size:14px;font-weight:900;color:#1e293b;">単語カード（WordCard）</div>
+        <div style="max-width:420px;background:#fff;border-radius:32px;box-shadow:0 10px 24px rgba(0,0,0,0.10);border:1px solid #e2e8f0;overflow:hidden;">
+          <div style="position:relative;">
+            <div style="position:absolute;top:12px;left:12px;z-index:2;background:rgba(255,255,255,0.85);backdrop-filter:blur(8px);padding:8px 20px;border-radius:12px;box-shadow:0 4px 10px rgba(0,0,0,0.1);font-family:'Klee One',serif;font-weight:600;color:#1e293b;font-size:20px;">先祖</div>
+            <div style="aspect-ratio:16/9;background:#f1f5f9;display:flex;align-items:center;justify-content:center;color:#94a3b8;font-weight:900;">写真 / イラスト / 動画</div>
+          </div>
+          <div style="padding:20px 28px;font-size:18px;font-weight:900;color:#0f172a;border-top:1px solid #f1f5f9;">むかし生きていて、今の家族につながる人。</div>
+        </div>
+        <div style="font-size:12px;font-weight:600;color:#94a3b8;">画像/動画は16:9枠（video-viewport）。横長画像は背景ぼかし＋前面contain二重表示で余白を埋める。複数画像は左右の丸い矢印ボタンで送る。動画は Google Drive の iframe プレビュー。</div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <div style="font-size:14px;font-weight:900;color:#1e293b;">単元カード（Home）</div>
+        <div style="max-width:420px;background:#fff;padding:32px;border-radius:36px;box-shadow:0 10px 24px rgba(0,0,0,0.10);border-bottom:8px solid #eef2ff;">
+          <div style="font-size:28px;font-weight:900;color:#1e293b;font-family:'Klee One',serif;">くらしと行事</div>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <div style="font-size:14px;font-weight:900;color:#1e293b;">学年スパイン（本棚の本・GradeSpine）</div>
+        <div style="width:100px;height:200px;background:linear-gradient(100deg, color-mix(in oklch, oklch(60% .13 250) 60%, white) 0%, oklch(60% .13 250) 16%, oklch(60% .13 250) 78%, oklch(36% .13 250) 100%);border-radius:4px 10px 10px 4px;box-shadow:0 16px 26px rgba(0,0,0,0.22);position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;">
+          <div style="position:absolute;inset:5px;border:2px solid rgba(255,214,120,0.75);border-radius:2px 8px 8px 2px;"></div>
+          <div style="width:64px;height:64px;border-radius:999px;background:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:36px;color:oklch(36% .13 250);">4</div>
+          <div style="color:#fff;font-size:12px;font-weight:700;">ねんせい</div>
+        </div>
+        <div style="font-size:12px;font-weight:600;color:#94a3b8;">タップで press → cover（浮き上がり）→ opening（ページがめくれる）の3段階アニメーションを経て単元一覧へ遷移。</div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <div style="font-size:14px;font-weight:900;color:#1e293b;">スティッキーヘッダー</div>
+        <div style="background:rgba(255,255,255,0.9);backdrop-filter:blur(20px);border-bottom:1px solid #e2e8f0;padding:14px 28px;display:flex;justify-content:space-between;align-items:center;border-radius:16px;">
+          <div style="width:44px;height:44px;background:#f1f5f9;border-radius:999px;display:flex;align-items:center;justify-content:center;font-weight:900;color:#475569;">←</div>
+          <div style="padding:10px 28px;background:#6366f1;color:#fff;border-radius:16px;font-weight:900;">▦ もくじ</div>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <div style="font-size:14px;font-weight:900;color:#1e293b;">モーダル（もくじ / 注意事項）</div>
+        <div style="max-width:460px;background:#fff;border-radius:32px;box-shadow:0 25px 50px rgba(0,0,0,0.22);overflow:hidden;">
+          <div style="padding:20px 28px;background:#f8fafc;border-bottom:1px solid #e2e8f0;display:flex;justify-content:space-between;align-items:center;">
+            <div style="font-size:18px;font-weight:900;color:#1e293b;">もくじ</div>
+            <div style="width:36px;height:36px;background:#e2e8f0;border-radius:999px;display:flex;align-items:center;justify-content:center;font-weight:900;">✕</div>
+          </div>
+          <div style="padding:20px 28px;display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+            <div style="padding:14px;border:2px solid #f1f5f9;border-radius:16px;text-align:center;font-weight:900;color:#1e293b;">先祖</div>
+            <div style="padding:14px;border:2px solid #f1f5f9;border-radius:16px;text-align:center;font-weight:900;color:#1e293b;">わら</div>
+          </div>
+        </div>
+        <div style="font-size:12px;font-weight:600;color:#94a3b8;">全画面をスレート900の80%透明＋ぼかしで覆い、モーダルは中央配置。閉じるボタンは常に右上の丸いXボタン。</div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <div style="font-size:14px;font-weight:900;color:#1e293b;">セクション見出し（左ボーダー強調）</div>
+        <div style="border-left:8px solid #6366f1;padding-left:16px;">
+          <div style="font-size:26px;font-weight:900;color:#0f172a;">くらしと行事</div>
+        </div>
+        <div style="font-size:12px;font-weight:600;color:#94a3b8;">単元見出しや「この教材について」画面の主要見出しに共通する、太い左ボーダー装飾。</div>
+      </div>
+    </section>
+
+    <section id="motion" style="display:flex;flex-direction:column;gap:16px;">
+      <span style="font-size:13px;font-weight:900;color:#6366f1;letter-spacing:0.06em;">06 · MOTION &amp; INTERACTION</span>
+      <h2 style="font-size:28px;font-weight:900;color:#0f172a;margin:0;">モーション・操作性</h2>
+      <div style="background:#fff;border:1px solid #e2e8f0;border-radius:24px;padding:28px;display:flex;flex-direction:column;gap:14px;">
+        <div style="display:flex;gap:24px;flex-wrap:wrap;">
+          <div><div style="font-size:12px;font-weight:900;color:#94a3b8;">押下 (130ms)</div><div style="font-size:13px;font-weight:700;color:#475569;">scale(0.94) — ease</div></div>
+          <div><div style="font-size:12px;font-weight:900;color:#94a3b8;">浮き上がり (380ms)</div><div style="font-size:13px;font-weight:700;color:#475569;">scale(1.22) translateY(-10px) — cubic-bezier(.25,.8,.3,1)</div></div>
+          <div><div style="font-size:12px;font-weight:900;color:#94a3b8;">本が開く (480ms)</div><div style="font-size:13px;font-weight:700;color:#475569;">8分割ストライプが遅延付きrotateYで開き、白フェードで画面遷移</div></div>
+        </div>
+        <p style="font-size:13px;font-weight:600;color:#64748b;line-height:1.7;margin:0;">
+          通常のタップ操作はすべて <code style="background:#f1f5f9;padding:2px 6px;border-radius:6px;">active:scale-95</code> の即時フィードバックのみ。学年選択だけ特別な「本を開く」演出を持つ、儀式的なエントリーポイントです。
+        </p>
+      </div>
+      <div style="background:#fff;border:1px solid #e2e8f0;border-radius:24px;padding:28px;display:flex;flex-direction:column;gap:10px;">
+        <div style="font-size:14px;font-weight:900;color:#1e293b;">共有iPad向けの操作制約</div>
+        <ul style="margin:0;padding-left:20px;font-size:13px;font-weight:600;color:#64748b;line-height:1.9;">
+          <li>ページ全体で text-select / タップハイライト / フォーカスリングを無効化（誤操作・意図しない選択の防止）</li>
+          <li>viewport は user-scalable=no で固定、ピンチズーム不可</li>
+          <li>画像読み込み失敗やデータ取得エラー時は、赤系の専用エラー画面と「再読み込み」ボタンを表示</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="content" style="display:flex;flex-direction:column;gap:16px;">
+      <span style="font-size:13px;font-weight:900;color:#6366f1;letter-spacing:0.06em;">07 · CONTENT &amp; TONE</span>
+      <h2 style="font-size:28px;font-weight:900;color:#0f172a;margin:0;">コンテンツ・トーン</h2>
+      <div style="background:#fff;border:1px solid #e2e8f0;border-radius:24px;padding:28px;display:flex;flex-direction:column;gap:14px;">
+        <p style="font-size:14px;font-weight:700;color:#475569;line-height:1.8;margin:0;">
+          UI文言はひらがな中心で短く（「もくじ」「ねんせい」「じゅんび中」）、児童にもそのまま読める語を選びます。
+          一方「この教材について」ページは大人（教員）向けの説明文で、収録／非収録の判断基準を丁寧な文体で明示する、というトーンの使い分けがあります。
+        </p>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <div style="font-size:12px;font-weight:900;color:#94a3b8;">収録しない語彙の判断基準（本文より）</div>
+          <div style="font-size:13px;font-weight:600;color:#475569;line-height:1.8;">① 動作化で伝わるもの　② 教科書と価値が重複するもの　③ 写真入手が困難でイラスト化も理解を助けないもの　④ 中立性の観点からイラスト化を避けるべきもの</div>
+        </div>
+        <p style="font-size:13px;font-weight:600;color:#64748b;line-height:1.8;margin:0;border-top:1px solid #f1f5f9;padding-top:14px;">
+          素材は生成AI（Google Gemini 等）で制作している旨を、学年選択画面下部に常時明記。教材の公開範囲・二次利用禁止についての注意事項をモーダルで案内する誠実な運用姿勢も、このアプリのトーンの一部です。
+        </p>
+      </div>
+    </section>
+
+    <div style="border-top:1px solid #e2e8f0;padding-top:24px;font-size:12px;font-weight:600;color:#94a3b8;">
+      出典: プロジェクト添付コード（index.html / コード.js / Security_Checklist.md）から抽出。今後の新規画面はこのシステムのカラー・書体・角丸・コンポーネントに準拠して作成してください。
+    </div>
+
+  </div>
+</div>
+
+</x-dc>
+</body>
+</html>

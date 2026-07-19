@@ -725,7 +725,6 @@
               background: 'linear-gradient(120deg, oklch(96% .03 300) 0%, oklch(96% .03 160) 35%, oklch(96% .04 60) 70%, oklch(96% .03 30) 100%)'
             }}
           >
-            <div style={{ position: 'absolute', inset: 0, zIndex: 0 }} dangerouslySetInnerHTML={{ __html: BOOKSHELF_BG_HTML }} />
           <div
             className="flex flex-col gap-3"
             style={{
@@ -739,6 +738,7 @@
               padding: '24px 34px 0'
             }}
           >
+              <div style={{ position: 'absolute', inset: 0, zIndex: 0 }} dangerouslySetInnerHTML={{ __html: BOOKSHELF_BG_HTML }} />
               {/* 🌟 最初の画面（学年選択）の右上に配置する控えめなボタン */}
               <div style={{ display: 'flex', justifyContent: 'flex-end', position: 'relative', zIndex: 1 }}>
                 <button
