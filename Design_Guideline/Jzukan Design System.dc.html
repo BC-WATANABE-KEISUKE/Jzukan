@@ -31,6 +31,7 @@
       <a href="#color" style="font-size:13px;font-weight:800;color:#475569;text-decoration:none;">カラー</a>
       <a href="#type" style="font-size:13px;font-weight:800;color:#475569;text-decoration:none;">タイポグラフィ</a>
       <a href="#shape" style="font-size:13px;font-weight:800;color:#475569;text-decoration:none;">形・余白・影</a>
+      <a href="#background" style="font-size:13px;font-weight:800;color:#475569;text-decoration:none;">背景システム</a>
       <a href="#components" style="font-size:13px;font-weight:800;color:#475569;text-decoration:none;">コンポーネント</a>
       <a href="#motion" style="font-size:13px;font-weight:800;color:#475569;text-decoration:none;">モーション</a>
       <a href="#content" style="font-size:13px;font-weight:800;color:#475569;text-decoration:none;">コンテンツ</a>
@@ -70,7 +71,8 @@
       <h2 style="font-size:28px;font-weight:900;color:#0f172a;margin:0;">カラー</h2>
       <p style="font-size:15px;font-weight:600;color:#64748b;line-height:1.7;margin:0;max-width:640px;">
         画面の土台は落ち着いたスレート（slate）の中立色。学習アプリらしい信頼感を保ちつつ、主要アクションと「もくじ」ボタンのみインディゴで強調します。
-        学年（本棚）選択画面だけは、学年ごとに識別しやすいよう oklch の虹色パレットを使用します。
+        学年選択・単元選択の「本」モチーフだけは、学年ごとに識別しやすいよう oklch の虹色パレットを使用します。
+        <b style="color:#1e293b;">戻る（←）ボタンは画面を問わず常にスレートのニュートラル配色</b>で統一し、学年カラーには連動させません。
       </p>
 
       <div style="display:flex;flex-direction:column;gap:10px;">
@@ -106,14 +108,14 @@
       </div>
 
       <div style="display:flex;flex-direction:column;gap:10px;">
-        <div style="font-size:12px;font-weight:900;color:#94a3b8;">学年パレット（学年選択画面の本の背表紙、oklchで生成）</div>
+        <div style="font-size:12px;font-weight:900;color:#94a3b8;">学年パレット（「本」モチーフ専用、oklchで生成）</div>
         <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;">
           <div style="display:flex;flex-direction:column;gap:6px;"><div style="height:56px;border-radius:12px;background:oklch(66% .18 25);"></div><div style="font-size:10px;font-weight:800;color:#475569;">2ねんせい<br/>oklch(66% .18 25)</div></div>
           <div style="display:flex;flex-direction:column;gap:6px;"><div style="height:56px;border-radius:12px;background:oklch(82% .19 96);"></div><div style="font-size:10px;font-weight:800;color:#475569;">3ねんせい<br/>oklch(82% .19 96)</div></div>
           <div style="display:flex;flex-direction:column;gap:6px;"><div style="height:56px;border-radius:12px;background:oklch(66% .15 150);"></div><div style="font-size:10px;font-weight:800;color:#475569;">4ねんせい<br/>oklch(66% .15 150)</div></div>
           <div style="display:flex;flex-direction:column;gap:6px;"><div style="height:56px;border-radius:12px;background:oklch(60% .13 250);"></div><div style="font-size:10px;font-weight:800;color:#475569;">5ねんせい<br/>oklch(60% .13 250)</div></div>
         </div>
-        <p style="font-size:13px;font-weight:600;color:#64748b;line-height:1.7;margin:4px 0 0;">各色は明るい base と濃い dark の2段階で構成し、本の背表紙のグラデーション（<code style="background:#f1f5f9;padding:2px 6px;border-radius:6px;">linear-gradient(100deg, base 60%→white 0%, base 16%, base 78%, dark 100%)</code>）と縁取りに使用。学年選択画面の背景自体は全学年色を薄く混ぜた <code style="background:#f1f5f9;padding:2px 6px;border-radius:6px;">oklch(96% .03 *)</code> の淡いグラデーションです。</p>
+        <p style="font-size:13px;font-weight:600;color:#64748b;line-height:1.7;margin:4px 0 0;">各色は明るい base と濃い dark の2段階で構成し、<b style="color:#1e293b;">学年選択の本の背表紙</b>と<b style="color:#1e293b;">単元選択の見開き本の背表紙・ページ端・付箋のテープ</b>の両方に、共通のグラデーション（<code style="background:#f1f5f9;padding:2px 6px;border-radius:6px;">linear-gradient(100deg, base 60%→white 0%, base 16%, base 78%, dark 100%)</code>）で使用。背景自体は全学年色を薄く混ぜた <code style="background:#f1f5f9;padding:2px 6px;border-radius:6px;">oklch(96% .03 *)</code> の淡いグラデーションです。ボタンやナビゲーションにはこのパレットを使わないこと。</p>
       </div>
     </section>
 
@@ -122,6 +124,7 @@
       <h2 style="font-size:28px;font-weight:900;color:#0f172a;margin:0;">タイポグラフィ</h2>
       <p style="font-size:15px;font-weight:600;color:#64748b;line-height:1.7;margin:0;max-width:640px;">
         単語カードの見出し（ふりがな付き）は手書き風で親しみやすい「クレー One」。それ以外のUI（ボタン・見出し・本文）はシステムのsans-serifで、太いウェイト（font-black / font-extrabold）を多用し、子どもにもはっきり読めるようにしています。
+        「本」モチーフ内のテキスト（学年数字・ねんせい・単元名の付箋・単語表示画面の単元見出し）は <code style="background:#f1f5f9;padding:2px 6px;border-radius:6px;">.round-font</code>（Arial Rounded MT Bold → Hiragino Maru Gothic ProN → Klee One の優先順）という丸ゴシック優先の第3の書体を使います。
       </p>
 
       <div style="background:#fff;border:1px solid #e2e8f0;border-radius:24px;padding:32px;display:flex;flex-direction:column;gap:8px;">
@@ -142,6 +145,11 @@
           <div style="font-size:11px;font-weight:600;color:#94a3b8;">注記・免責文 600 / 11px</div>
         </div>
       </div>
+
+      <div style="background:#fff;border:1px solid #e2e8f0;border-radius:24px;padding:32px;display:flex;flex-direction:column;gap:8px;">
+        <div style="font-size:12px;font-weight:900;color:#94a3b8;">可変長テキストの縮小フォールバック</div>
+        <p style="font-size:13px;font-weight:600;color:#64748b;line-height:1.8;margin:0;">単元カードの単元名など、スプレッドシート由来で長さが不定なテキストは、文字数に応じてフォントサイズを段階的に縮小します（例: 21px→17px→14px）。それでも収まらない場合は <code style="background:#f1f5f9;padding:2px 6px;border-radius:6px;">text-overflow: ellipsis</code> で1行に収め、折り返しによるカードの高さ崩れを避けます。</p>
+      </div>
     </section>
 
     <section id="shape" style="display:flex;flex-direction:column;gap:20px;">
@@ -157,6 +165,7 @@
         <div style="display:flex;flex-direction:column;align-items:center;gap:8px;"><div style="width:100%;height:60px;background:#eef2ff;border-radius:32px;"></div><div style="font-size:11px;font-weight:800;color:#475569;">2rem・単語カード</div></div>
         <div style="display:flex;flex-direction:column;align-items:center;gap:8px;"><div style="width:100%;height:60px;background:#eef2ff;border-radius:999px;"></div><div style="font-size:11px;font-weight:800;color:#475569;">full・ボタン</div></div>
       </div>
+      <p style="font-size:13px;font-weight:600;color:#64748b;line-height:1.7;margin:0;max-width:640px;">例外として、本・付箋モチーフのカード（学年の背表紙・単元の付箋）だけは角丸をごく小さく（<code style="background:#f1f5f9;padding:2px 6px;border-radius:6px;">3px〜4px</code>）し、紙・本らしい質感を優先します。</p>
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:8px;">
         <div style="background:#fff;border-radius:20px;padding:20px;box-shadow:0 1px 3px rgba(0,0,0,0.08);"><div style="font-size:12px;font-weight:900;color:#94a3b8;">shadow-md</div><div style="font-size:12px;font-weight:600;color:#64748b;margin-top:4px;">単元カード・小コンポーネント</div></div>
         <div style="background:#fff;border-radius:20px;padding:20px;box-shadow:0 10px 24px rgba(0,0,0,0.10);"><div style="font-size:12px;font-weight:900;color:#94a3b8;">shadow-lg</div><div style="font-size:12px;font-weight:600;color:#64748b;margin-top:4px;">単語カード・主要ボタン</div></div>
@@ -164,8 +173,31 @@
       </div>
     </section>
 
+    <section id="background" style="display:flex;flex-direction:column;gap:20px;">
+      <span style="font-size:13px;font-weight:900;color:#6366f1;letter-spacing:0.06em;">05 · BACKGROUND SYSTEM</span>
+      <h2 style="font-size:28px;font-weight:900;color:#0f172a;margin:0;">背景システム</h2>
+      <p style="font-size:15px;font-weight:600;color:#64748b;line-height:1.7;margin:0;max-width:680px;">
+        画面の性質によって背景の作り方を2パターンに使い分けます。
+      </p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+        <div style="background:#fff;border:1px solid #e2e8f0;border-radius:24px;padding:28px;display:flex;flex-direction:column;gap:10px;">
+          <div style="font-size:13px;font-weight:900;color:#1e293b;">① 固定サイズの舞台<br/><span style="font-weight:700;color:#94a3b8;font-size:12px;">学年選択・単元選択</span></div>
+          <p style="font-size:13px;font-weight:600;color:#64748b;line-height:1.8;margin:0;">スクロールしない一枚絵の画面。デザイン上の固定キャンバス（<code style="background:#f1f5f9;padding:2px 6px;border-radius:6px;">DESIGN_W×DESIGN_H = 860×620</code>）を基準に、<code style="background:#f1f5f9;padding:2px 6px;border-radius:6px;">ResizeObserver</code> で計測した実ビューポートに対して <b style="color:#1e293b;">contain</b>（<code style="background:#f1f5f9;padding:2px 6px;border-radius:6px;">Math.min(w/DESIGN_W, h/DESIGN_H)</code>）でCSS <code style="background:#f1f5f9;padding:2px 6px;border-radius:6px;">transform: scale()</code> し、常に中央配置。背景（グラデーション＋本棚シルエット）は必ずこの舞台の<b style="color:#1e293b;">内側に1枚だけ</b>描画する。iPadの横長比率（約1.33〜1.52）ではcontainにより要素が画面外に切れることはなく、比率差はグラデーションのみの余白として許容する。</p>
+        </div>
+        <div style="background:#fff;border:1px solid #e2e8f0;border-radius:24px;padding:28px;display:flex;flex-direction:column;gap:10px;">
+          <div style="font-size:13px;font-weight:900;color:#1e293b;">② スクロールするコンテンツ<br/><span style="font-weight:700;color:#94a3b8;font-size:12px;">単語表示・この教材について</span></div>
+          <p style="font-size:13px;font-weight:600;color:#64748b;line-height:1.8;margin:0;"><code style="background:#f1f5f9;padding:2px 6px;border-radius:6px;">position: fixed; inset: 0; z-index: -1</code> の背景レイヤーをコンテンツの下に敷く。この2画面は<b style="color:#1e293b;">本棚シルエットを使わず、グラデーションのみ</b>（コンテンツ量が多く、模様があると賑やかになりすぎるため）。</p>
+        </div>
+      </div>
+      <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:20px;padding:20px 24px;">
+        <div style="font-size:12px;font-weight:900;color:#b91c1c;">⚠ 過去の不具合: 背景の継ぎ目・比率ズレ</div>
+        <p style="font-size:13px;font-weight:600;color:#7f1d1d;line-height:1.8;margin:6px 0 0;">舞台の外側（余白）に等倍の背景レイヤーを別途重ねたところ、拡大率の違いで本の密度が不連続になり継ぎ目が見えた。背景は必ず舞台と同じ拡大縮小の対象にすること。</p>
+      </div>
+      <p style="font-size:13px;font-weight:600;color:#64748b;line-height:1.7;margin:0;">背景グラデーションはどちらのパターンも共通: <code style="background:#f1f5f9;padding:2px 6px;border-radius:6px;font-size:11px;">linear-gradient(120deg, oklch(96% .03 300) 0%, oklch(96% .03 160) 35%, oklch(96% .04 60) 70%, oklch(96% .03 30) 100%)</code></p>
+    </section>
+
     <section id="components" style="display:flex;flex-direction:column;gap:24px;">
-      <span style="font-size:13px;font-weight:900;color:#6366f1;letter-spacing:0.06em;">05 · COMPONENTS</span>
+      <span style="font-size:13px;font-weight:900;color:#6366f1;letter-spacing:0.06em;">06 · COMPONENTS</span>
       <h2 style="font-size:28px;font-weight:900;color:#0f172a;margin:0;">コンポーネント</h2>
 
       <div style="display:flex;flex-direction:column;gap:12px;">
@@ -175,7 +207,11 @@
           <div style="width:52px;height:52px;background:#f1f5f9;border-radius:999px;display:flex;align-items:center;justify-content:center;font-weight:900;color:#475569;">←</div>
           <div style="padding:8px 16px;background:#fff;border:1px solid #e5e1d8;border-radius:999px;font-weight:700;font-size:13px;color:#55524c;box-shadow:0 1px 2px rgba(0,0,0,0.14);">？ この教材について</div>
         </div>
-        <div style="font-size:12px;font-weight:600;color:#94a3b8;">押下時は active:scale-95（わずかに縮む）でフィードバック。角丸は用途を問わず基本 full。</div>
+        <div style="font-size:12px;font-weight:600;color:#94a3b8;">押下時は active:scale-95（わずかに縮む）でフィードバック。角丸は用途を問わず基本 full。「←」戻るボタンは画面を問わず常にこの配色（slate-100背景＋slate-700アイコン）で統一する。</div>
+        <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:16px;padding:16px 20px;margin-top:4px;">
+          <div style="font-size:12px;font-weight:900;color:#b91c1c;">⚠ 押下時に背景色が消える不具合</div>
+          <p style="font-size:12px;font-weight:600;color:#7f1d1d;line-height:1.8;margin:6px 0 0;">グローバルCSSに <code style="background:#fff;padding:1px 5px;border-radius:5px;">button:focus, button:active { background-color: transparent !important; }</code>（誤操作防止用）があり、ボタン固有の背景色を `!important` で上書きしてしまうことがある。色を保ちたいボタンには専用クラス（例: <code style="background:#fff;padding:1px 5px;border-radius:5px;">.about-btn</code> / <code style="background:#fff;padding:1px 5px;border-radius:5px;">.mokuji-btn</code> / <code style="background:#fff;padding:1px 5px;border-radius:5px;">.back-btn</code>）を付け、<code style="background:#fff;padding:1px 5px;border-radius:5px;">button.xxx-btn:active { background-color: 元の色 !important; }</code> で個別に打ち消すこと。</p>
+        </div>
       </div>
 
       <div style="display:flex;flex-direction:column;gap:12px;">
@@ -191,20 +227,35 @@
       </div>
 
       <div style="display:flex;flex-direction:column;gap:12px;">
-        <div style="font-size:14px;font-weight:900;color:#1e293b;">単元カード（Home）</div>
-        <div style="max-width:420px;background:#fff;padding:32px;border-radius:36px;box-shadow:0 10px 24px rgba(0,0,0,0.10);border-bottom:8px solid #eef2ff;">
-          <div style="font-size:28px;font-weight:900;color:#1e293b;font-family:'Klee One',serif;">くらしと行事</div>
-        </div>
-      </div>
-
-      <div style="display:flex;flex-direction:column;gap:12px;">
         <div style="font-size:14px;font-weight:900;color:#1e293b;">学年スパイン（本棚の本・GradeSpine）</div>
         <div style="width:100px;height:200px;background:linear-gradient(100deg, color-mix(in oklch, oklch(60% .13 250) 60%, white) 0%, oklch(60% .13 250) 16%, oklch(60% .13 250) 78%, oklch(36% .13 250) 100%);border-radius:4px 10px 10px 4px;box-shadow:0 16px 26px rgba(0,0,0,0.22);position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;">
           <div style="position:absolute;inset:5px;border:2px solid rgba(255,214,120,0.75);border-radius:2px 8px 8px 2px;"></div>
           <div style="width:64px;height:64px;border-radius:999px;background:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:36px;color:oklch(36% .13 250);">4</div>
           <div style="color:#fff;font-size:12px;font-weight:700;">ねんせい</div>
         </div>
-        <div style="font-size:12px;font-weight:600;color:#94a3b8;">タップで press → cover（浮き上がり）→ opening（ページがめくれる）の3段階アニメーションを経て単元一覧へ遷移。</div>
+        <div style="font-size:12px;font-weight:600;color:#94a3b8;">タップで press → cover（浮き上がり）→ opening（ページがめくれる）の3段階アニメーションを経て単元選択へ遷移。</div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <div style="font-size:14px;font-weight:900;color:#1e293b;">単元スパイン（見開き本・UnitSpread）</div>
+        <div style="max-width:520px;background:linear-gradient(100deg,#f2ead7,#fffdf6 10%,#fffdf6 90%,#f2ead7);border-radius:20px;padding:24px;box-shadow:0 16px 26px rgba(0,0,0,0.18);position:relative;display:flex;gap:2px;">
+          <div style="position:absolute;left:0;top:8%;bottom:8%;width:2px;background:rgba(0,0,0,0.1);"></div>
+          <div style="flex:1;display:flex;flex-direction:column;gap:12px;padding-right:10px;">
+            <div style="position:relative;background:#fffef9;border-radius:3px;padding:14px 16px;box-shadow:0 5px 10px rgba(0,0,0,0.14);transform:rotate(-1.5deg);">
+              <div style="position:absolute;top:-8px;left:50%;transform:translateX(-50%) rotate(-4deg);width:44px;height:14px;background:oklch(38% .15 150);opacity:0.55;border-radius:2px;"></div>
+              <div style="font-family:'Klee One',serif;font-weight:600;font-size:16px;color:#3a362f;">こまを楽しむ</div>
+            </div>
+            <div style="position:relative;background:#fffef9;border-radius:3px;padding:14px 16px;box-shadow:0 5px 10px rgba(0,0,0,0.14);transform:rotate(1deg);">
+              <div style="position:absolute;top:-8px;left:50%;transform:translateX(-50%) rotate(-4deg);width:44px;height:14px;background:oklch(38% .15 150);opacity:0.55;border-radius:2px;"></div>
+              <div style="font-family:'Klee One',serif;font-weight:600;font-size:16px;color:#3a362f;">まいごのかぎ</div>
+            </div>
+          </div>
+          <div style="flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;padding-left:10px;gap:6px;">
+            <div style="width:9px;height:9px;border-radius:999px;background:oklch(38% .15 150);"></div>
+            <div style="width:9px;height:9px;border-radius:999px;background:#e3ddce;"></div>
+          </div>
+        </div>
+        <div style="font-size:12px;font-weight:600;color:#94a3b8;">単元選択も「本」のモチーフで統一。見開いた本の左右ページに、単元名を書いた付箋風カード（テープ留め・わずかな回転・紙のような小さい角丸）を最大4件ずつ計8件まで配置。9件以上は8件ごとにページ分割し、矢印とドットで送る。単元名はスプレッドシートの実データを<code style="background:#f1f5f9;padding:1px 5px;border-radius:5px;">Ruby</code>コンポーネントでふりがな表示。カードタップで press → 白フェード（学年選択と同じストライプ演出を再利用）→ 単語一覧へ遷移。</div>
       </div>
 
       <div style="display:flex;flex-direction:column;gap:12px;">
@@ -213,6 +264,7 @@
           <div style="width:44px;height:44px;background:#f1f5f9;border-radius:999px;display:flex;align-items:center;justify-content:center;font-weight:900;color:#475569;">←</div>
           <div style="padding:10px 28px;background:#6366f1;color:#fff;border-radius:16px;font-weight:900;">▦ もくじ</div>
         </div>
+        <div style="font-size:12px;font-weight:600;color:#94a3b8;">タイトル文言は置かず、戻る・もくじ等のボタンのみを配置する（画面名の明示はしない）。</div>
       </div>
 
       <div style="display:flex;flex-direction:column;gap:12px;">
@@ -235,21 +287,30 @@
         <div style="border-left:8px solid #6366f1;padding-left:16px;">
           <div style="font-size:26px;font-weight:900;color:#0f172a;">くらしと行事</div>
         </div>
-        <div style="font-size:12px;font-weight:600;color:#94a3b8;">単元見出しや「この教材について」画面の主要見出しに共通する、太い左ボーダー装飾。</div>
+        <div style="font-size:12px;font-weight:600;color:#94a3b8;">「この教材について」画面など、本文内の小見出しに使う装飾。画面全体のタイトルには使わない。</div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <div style="font-size:14px;font-weight:900;color:#1e293b;">単語表示画面の単元見出し（付箋スタイル）</div>
+        <div style="display:inline-block;position:relative;background:#fffef9;border-radius:3px;padding:18px 30px;box-shadow:0 5px 10px rgba(0,0,0,0.14);width:fit-content;">
+          <div style="position:absolute;top:-9px;left:50%;transform:translateX(-50%) rotate(-3deg);width:60px;height:18px;background:oklch(38% .15 150);opacity:0.55;border-radius:2px;"></div>
+          <div style="font-family:'Klee One',serif;font-weight:600;font-size:32px;color:#3a362f;">こまを楽しむ</div>
+        </div>
+        <div style="font-size:12px;font-weight:600;color:#94a3b8;">単元選択の付箋カードと同じ見た目（クリーム背景＋学年カラーのテープ＋丸ゴシック体）で統一。以前のインディゴ左ボーダー見出しから変更。</div>
       </div>
     </section>
 
     <section id="motion" style="display:flex;flex-direction:column;gap:16px;">
-      <span style="font-size:13px;font-weight:900;color:#6366f1;letter-spacing:0.06em;">06 · MOTION &amp; INTERACTION</span>
+      <span style="font-size:13px;font-weight:900;color:#6366f1;letter-spacing:0.06em;">07 · MOTION &amp; INTERACTION</span>
       <h2 style="font-size:28px;font-weight:900;color:#0f172a;margin:0;">モーション・操作性</h2>
       <div style="background:#fff;border:1px solid #e2e8f0;border-radius:24px;padding:28px;display:flex;flex-direction:column;gap:14px;">
         <div style="display:flex;gap:24px;flex-wrap:wrap;">
           <div><div style="font-size:12px;font-weight:900;color:#94a3b8;">押下 (130ms)</div><div style="font-size:13px;font-weight:700;color:#475569;">scale(0.94) — ease</div></div>
           <div><div style="font-size:12px;font-weight:900;color:#94a3b8;">浮き上がり (380ms)</div><div style="font-size:13px;font-weight:700;color:#475569;">scale(1.22) translateY(-10px) — cubic-bezier(.25,.8,.3,1)</div></div>
-          <div><div style="font-size:12px;font-weight:900;color:#94a3b8;">本が開く (480ms)</div><div style="font-size:13px;font-weight:700;color:#475569;">8分割ストライプが遅延付きrotateYで開き、白フェードで画面遷移</div></div>
+          <div><div style="font-size:12px;font-weight:900;color:#94a3b8;">本が開く／めくれる (480〜620ms)</div><div style="font-size:13px;font-weight:700;color:#475569;">8分割ストライプが遅延付きrotateYで開き、白フェードで画面遷移。学年選択（480ms）・単元選択の付箋タップ（130ms押下＋620msフェード）で同じ仕組み（screenStripStyle / gradeOverlayStyle）を共有</div></div>
         </div>
         <p style="font-size:13px;font-weight:600;color:#64748b;line-height:1.7;margin:0;">
-          通常のタップ操作はすべて <code style="background:#f1f5f9;padding:2px 6px;border-radius:6px;">active:scale-95</code> の即時フィードバックのみ。学年選択だけ特別な「本を開く」演出を持つ、儀式的なエントリーポイントです。
+          通常のタップ操作はすべて <code style="background:#f1f5f9;padding:2px 6px;border-radius:6px;">active:scale-95</code> の即時フィードバックのみ。学年選択と単元選択の2画面だけが「本を開く／めくる」特別な演出を持つ、儀式的な導線です（他の画面には広げません）。
         </p>
       </div>
       <div style="background:#fff;border:1px solid #e2e8f0;border-radius:24px;padding:28px;display:flex;flex-direction:column;gap:10px;">
@@ -263,7 +324,7 @@
     </section>
 
     <section id="content" style="display:flex;flex-direction:column;gap:16px;">
-      <span style="font-size:13px;font-weight:900;color:#6366f1;letter-spacing:0.06em;">07 · CONTENT &amp; TONE</span>
+      <span style="font-size:13px;font-weight:900;color:#6366f1;letter-spacing:0.06em;">08 · CONTENT &amp; TONE</span>
       <h2 style="font-size:28px;font-weight:900;color:#0f172a;margin:0;">コンテンツ・トーン</h2>
       <div style="background:#fff;border:1px solid #e2e8f0;border-radius:24px;padding:28px;display:flex;flex-direction:column;gap:14px;">
         <p style="font-size:14px;font-weight:700;color:#475569;line-height:1.8;margin:0;">
@@ -275,7 +336,7 @@
           <div style="font-size:13px;font-weight:600;color:#475569;line-height:1.8;">① 動作化で伝わるもの　② 教科書と価値が重複するもの　③ 写真入手が困難でイラスト化も理解を助けないもの　④ 中立性の観点からイラスト化を避けるべきもの</div>
         </div>
         <p style="font-size:13px;font-weight:600;color:#64748b;line-height:1.8;margin:0;border-top:1px solid #f1f5f9;padding-top:14px;">
-          素材は生成AI（Google Gemini 等）で制作している旨を、学年選択画面下部に常時明記。教材の公開範囲・二次利用禁止についての注意事項をモーダルで案内する誠実な運用姿勢も、このアプリのトーンの一部です。
+          素材は生成AI（Google Gemini 等）で制作している旨を、学年選択画面下部に常時明記。教材の公開範囲・二次利用禁止についての注意事項は、リンクをタップした時だけモーダルで案内する（常時表示のテキストにしない）誠実かつ簡潔な運用姿勢も、このアプリのトーンの一部です。
         </p>
       </div>
     </section>

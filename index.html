@@ -79,7 +79,22 @@
       outline: none !important;
       background-color: transparent !important;
     }
-    
+
+    /* 🛠️ 「この教材について」ボタン：上のtransparent強制ルールを打ち消し、押下時も白背景を保つ */
+    button.about-btn:focus, button.about-btn:active {
+      background-color: #fff !important;
+    }
+
+    /* 🛠️ 「もくじ」ボタン：押下時に白フラッシュしないよう、インディゴ背景を保つ */
+    button.mokuji-btn:focus, button.mokuji-btn:active {
+      background-color: #6366f1 !important;
+    }
+
+    /* 🛠️ 「戻る」ボタン：全画面共通で押下時もスレート背景を保つ */
+    button.back-btn:focus, button.back-btn:active {
+      background-color: #f1f5f9 !important;
+    }
+
     .word-label, .word-label .ruby-container, .word-label .ruby-item, .word-label .rt, .word-label .rb, .word-label ruby, .word-label rt, .word-label rp {
       font-family: "Klee-Medium", "Klee-Regular", "クレー", "Klee", "Klee One", "KleeOne", "Hiragino Maru Gothic ProN", "ヒラギノ丸ゴ ProN", serif;
     }
@@ -345,14 +360,18 @@
       ];
 
       return (
-        <div className="min-h-screen w-full bg-slate-100 antialiased selection:bg-transparent">
+        <div className="min-h-screen w-full antialiased selection:bg-transparent relative">
+          <div
+            style={{
+              position: 'fixed', inset: 0, zIndex: -1,
+              background: 'linear-gradient(120deg, oklch(96% .03 300) 0%, oklch(96% .03 160) 35%, oklch(96% .04 60) 70%, oklch(96% .03 30) 100%)'
+            }}
+          />
+
           <div className="sticky top-0 z-40 bg-white/90 backdrop-blur-xl border-b p-4 flex items-center px-8">
-            <button onClick={onBack} className="p-3 bg-slate-100 rounded-full text-slate-700 active:scale-95">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-                <path d="m15 18-6-6 6-6" />
-              </svg>
+            <button onClick={onBack} className="back-btn p-3 bg-slate-100 rounded-full text-slate-700 active:scale-95 transition-transform">
+              <Icons.Back />
             </button>
-            <span className="ml-4 font-extrabold text-slate-700 text-lg">この教材について</span>
           </div>
 
           <div className="max-w-4xl mx-auto p-6 mt-6 space-y-8 pb-20">
@@ -645,6 +664,10 @@
       const [pressedGrade, setPressedGrade] = useState(null);
       const [showTerms, setShowTerms] = useState(false);
       const [gradeScale, setGradeScale] = useState(1);
+      const [unitPage, setUnitPage] = useState(0);
+      const [unitFade, setUnitFade] = useState(false);
+      const [cardPress, setCardPress] = useState(null);
+      const [cardFlip, setCardFlip] = useState(null);
 
       useEffect(() => {
         const computeScale = () => {
@@ -677,6 +700,7 @@
               setView('home');
               setUiPhase('idle');
               setPressedGrade(null);
+              setUnitPage(0);
             }, 480);
           }, 380);
         }, 130);
@@ -743,6 +767,7 @@
               <div style={{ display: 'flex', justifyContent: 'flex-end', position: 'relative', zIndex: 1 }}>
                 <button
                   onClick={() => setView('about')}
+                  className="about-btn active:scale-95 transition-transform"
                   style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '8px 16px', background: '#fff', border: '1px solid #e5e1d8', color: '#55524c', fontWeight: 700, borderRadius: '999px', boxShadow: '0 1px 2px rgba(0,0,0,.14)', fontSize: '13px', cursor: 'pointer' }}
                 >
                   <span style={{ color: 'oklch(48% .12 260)', fontWeight: 700 }}>？</span>
@@ -833,32 +858,189 @@
 
 
       if (view === 'home') {
+        const availableGrades = [...new Set(rawData.map(d => d.grade))].sort();
+        const gradeIdx = Math.max(0, availableGrades.indexOf(activeGrade));
+        const c = GRADE_PALETTE[gradeIdx % GRADE_PALETTE.length];
         const gradeUnits = rawData.filter(d => d.grade === activeGrade).reduce((acc, curr) => {
           if (!acc.find(u => u.unitId === curr.unitId)) acc.push({ unitId: curr.unitId, unitRuby: curr.unitRuby });
           return acc;
         }, []);
+        const pageCount = Math.max(1, Math.ceil(gradeUnits.length / 8));
+        const spread = gradeUnits.slice(unitPage * 8, unitPage * 8 + 8);
+        const leftUnits = spread.slice(0, 4);
+        const rightUnits = spread.slice(4, 8);
+        const rotL = [-2, 1.5, -1, 1.2];
+        const rotR = [2, -1.5, 1, -1.2];
+
+        const plainLen = (s) => {
+          if (typeof s !== 'string') return 0;
+          let t = s;
+          if (t.includes('&lt;')) t = t.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&');
+          return t.replace(/<[^>]*>/g, '').length;
+        };
+        const unitFontSize = (label) => {
+          const len = plainLen(label);
+          if (len > 12) return 14;
+          if (len > 9) return 17;
+          return 21;
+        };
+
+        const turnUnitPage = (delta) => {
+          if (cardPress || cardFlip) return;
+          setUnitFade(true);
+          setTimeout(() => {
+            setUnitPage(p => p + delta);
+            setUnitFade(false);
+          }, 160);
+        };
+
+        const openUnit = (unit) => {
+          if (cardPress || cardFlip) return;
+          setCardPress(unit.unitId);
+          setTimeout(() => {
+            setCardPress(null);
+            setCardFlip('opening');
+            setTimeout(() => {
+              setActiveUnit(unit.unitId);
+              setView('unit');
+              setCardFlip(null);
+              setUnitPage(0);
+            }, 620);
+          }, 130);
+        };
+
+        const cardStyleFor = (id, rot) => {
+          const pressed = cardPress === id;
+          return {
+            position: 'relative',
+            transform: pressed ? `scale(.93) rotate(${rot * 0.3}deg)` : `scale(1) rotate(${rot}deg)`,
+            transition: 'transform .15s cubic-bezier(.3,.6,.3,1)',
+            background: '#fffef9',
+            borderRadius: '3px',
+            padding: '16px 14px',
+            boxShadow: '0 5px 10px rgba(0,0,0,.14), 0 1px 0 rgba(255,255,255,.6) inset',
+            display: 'flex',
+            alignItems: 'center',
+            border: '1px solid rgba(0,0,0,.04)',
+            cursor: 'pointer'
+          };
+        };
+
+        const pageStyle = (len) => ({
+          position: 'absolute', top: 0, width: '50%', height: '100%', zIndex: 4,
+          padding: '6%', display: 'flex', flexDirection: 'column',
+          justifyContent: len >= 4 ? 'space-between' : 'flex-start', gap: 16, boxSizing: 'border-box',
+          opacity: unitFade ? 0 : 1,
+          transform: unitFade ? 'scale(.985)' : 'scale(1)',
+          transition: unitFade ? 'opacity .16s ease, transform .16s ease' : 'opacity .2s ease .05s, transform .2s ease .05s'
+        });
 
         return (
-          <div className="min-h-screen p-6 bg-slate-50">
-            <button onClick={() => setView('grade')} className="mb-8 p-4 bg-white rounded-full shadow-md"><Icons.Back /></button>
-            <div className="grid grid-cols-1 gap-6 max-w-4xl mx-auto">
-              {gradeUnits.map(unit => (
-                <button key={unit.unitId} onClick={() => { setActiveUnit(unit.unitId); setView('unit'); }} className="bg-white p-12 rounded-[2.5rem] shadow-lg text-left active:scale-[0.98] border-b-8 border-indigo-100">
-                  <h3 className="text-4xl font-black text-slate-800"><Ruby t={unit.unitId} r={unit.unitRuby} /></h3>
-                </button>
-              ))}
+          <div
+            style={{
+              position: 'fixed', inset: 0, overflow: 'hidden',
+              background: 'linear-gradient(120deg, oklch(96% .03 300) 0%, oklch(96% .03 160) 35%, oklch(96% .04 60) 70%, oklch(96% .03 30) 100%)'
+            }}
+          >
+            <button onClick={() => setView('grade')} className="back-btn fixed top-4 left-8 z-20 p-3 bg-slate-100 rounded-full text-slate-700 active:scale-95 transition-transform">
+              <Icons.Back />
+            </button>
+
+            <div
+              style={{
+                position: 'absolute', top: '50%', left: '50%',
+                width: DESIGN_W + 'px', height: DESIGN_H + 'px',
+                transform: `translate(-50%, -50%) scale(${gradeScale})`,
+                transformOrigin: 'center center'
+              }}
+            >
+              <div style={{ position: 'absolute', inset: 0, zIndex: 0 }} dangerouslySetInnerHTML={{ __html: BOOKSHELF_BG_HTML }} />
+
+              <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', padding: '20px 0 28px', boxSizing: 'border-box' }}>
+                <div style={{ position: 'relative', width: 720, maxWidth: '100%', height: 468, filter: 'drop-shadow(0 26px 32px rgba(0,0,0,.26))' }}>
+                  <div style={{ position: 'absolute', left: -24, top: 22, bottom: 22, width: 22, background: c.dark, borderRadius: '18px 0 0 18px', boxShadow: '0 4px 8px rgba(0,0,0,.18)', zIndex: 0 }} />
+                  <div style={{ position: 'absolute', left: -13, top: 20, bottom: 20, width: 16, background: 'linear-gradient(90deg,#ddd0a8,#f0e6c8)', borderRadius: '15px 0 0 15px', boxShadow: 'inset 2px 0 3px rgba(0,0,0,.1)', zIndex: 0 }} />
+                  <div style={{ position: 'absolute', left: -8, top: 14, bottom: 14, width: 16, background: 'linear-gradient(90deg,#e6dcc2,#f4ecd8)', borderRadius: '14px 0 0 14px', boxShadow: 'inset 2px 0 3px rgba(0,0,0,.08)', zIndex: 0 }} />
+                  <div style={{ position: 'absolute', left: -4, top: 9, bottom: 9, width: 14, background: 'linear-gradient(90deg,#ece3cc,#f8f1e0)', borderRadius: '12px 0 0 12px', boxShadow: 'inset 2px 0 3px rgba(0,0,0,.06)', zIndex: 0 }} />
+                  <div style={{ position: 'absolute', right: -24, top: 22, bottom: 22, width: 22, background: c.dark, borderRadius: '0 18px 18px 0', boxShadow: '0 4px 8px rgba(0,0,0,.18)', zIndex: 0 }} />
+                  <div style={{ position: 'absolute', right: -13, top: 20, bottom: 20, width: 16, background: 'linear-gradient(270deg,#ddd0a8,#f0e6c8)', borderRadius: '0 15px 15px 0', boxShadow: 'inset -2px 0 3px rgba(0,0,0,.1)', zIndex: 0 }} />
+                  <div style={{ position: 'absolute', right: -8, top: 14, bottom: 14, width: 16, background: 'linear-gradient(270deg,#e6dcc2,#f4ecd8)', borderRadius: '0 14px 14px 0', boxShadow: 'inset -2px 0 3px rgba(0,0,0,.08)', zIndex: 0 }} />
+                  <div style={{ position: 'absolute', right: -4, top: 9, bottom: 9, width: 14, background: 'linear-gradient(270deg,#ece3cc,#f8f1e0)', borderRadius: '0 12px 12px 0', boxShadow: 'inset -2px 0 3px rgba(0,0,0,.06)', zIndex: 0 }} />
+                  <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(100deg,#f2ead7,#fffdf6 10%,#fffdf6 90%,#f2ead7)', borderRadius: 32, boxShadow: '0 2px 0 rgba(0,0,0,.05)', zIndex: 1 }} />
+                  <div style={{ position: 'absolute', left: 0, top: 0, width: '50%', height: '100%', boxShadow: 'inset -30px 0 34px -22px rgba(0,0,0,.2)', borderRadius: '32px 0 0 32px', zIndex: 2, pointerEvents: 'none' }} />
+                  <div style={{ position: 'absolute', right: 0, top: 0, width: '50%', height: '100%', boxShadow: 'inset 30px 0 34px -22px rgba(0,0,0,.2)', borderRadius: '0 32px 32px 0', zIndex: 2, pointerEvents: 'none' }} />
+                  <div style={{ position: 'absolute', left: '50%', top: '4%', bottom: '4%', width: 2, transform: 'translateX(-50%)', background: 'rgba(0,0,0,.1)', zIndex: 3 }} />
+                  {[[8, .16], [14, .13], [20, .1]].map(([top, op]) => (
+                    <div key={'l' + top} style={{ position: 'absolute', left: '6%', top: top + '%', width: '38%', height: 0, borderTop: `1px solid rgba(120,105,70,${op})` }} />
+                  ))}
+                  {[[8, .16], [14, .13], [20, .1]].map(([top, op]) => (
+                    <div key={'r' + top} style={{ position: 'absolute', right: '6%', top: top + '%', width: '38%', height: 0, borderTop: `1px solid rgba(120,105,70,${op})` }} />
+                  ))}
+                  <div style={{ position: 'absolute', left: 0, right: 0, bottom: 0, height: 12, background: 'linear-gradient(0deg,rgba(0,0,0,.05),transparent)', borderRadius: '0 0 32px 32px', zIndex: 2, pointerEvents: 'none' }} />
+                  <div style={{ position: 'absolute', left: 0, right: 0, top: 0, height: 12, background: 'linear-gradient(180deg,rgba(0,0,0,.05),transparent)', borderRadius: '32px 32px 0 0', zIndex: 2, pointerEvents: 'none' }} />
+
+                  {unitPage > 0 && (
+                    <button onClick={() => turnUnitPage(-1)} style={{ position: 'absolute', left: -56, top: '50%', transform: 'translateY(-50%)', width: 44, height: 44, borderRadius: '50%', background: '#fff', border: '1px solid #e5e1d8', boxShadow: '0 2px 6px rgba(0,0,0,.18)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: c.dark, cursor: 'pointer', zIndex: 6 }}>
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="m15 18-6-6 6-6" /></svg>
+                    </button>
+                  )}
+                  {unitPage < pageCount - 1 && (
+                    <button onClick={() => turnUnitPage(1)} style={{ position: 'absolute', right: -56, top: '50%', transform: 'translateY(-50%)', width: 44, height: 44, borderRadius: '50%', background: '#fff', border: '1px solid #e5e1d8', boxShadow: '0 2px 6px rgba(0,0,0,.18)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: c.dark, cursor: 'pointer', zIndex: 6 }}>
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="m9 18 6-6-6-6" /></svg>
+                    </button>
+                  )}
+                  {pageCount > 1 && (
+                    <div style={{ position: 'absolute', left: 0, right: 0, bottom: -30, display: 'flex', justifyContent: 'center', gap: 8, zIndex: 6 }}>
+                      {Array.from({ length: pageCount }).map((_, i) => (
+                        <div key={i} style={{ width: 9, height: 9, borderRadius: '50%', background: i === unitPage ? c.dark : '#e3ddce' }} />
+                      ))}
+                    </div>
+                  )}
+
+                  <div style={{ ...pageStyle(leftUnits.length), left: 0 }}>
+                    {leftUnits.map((u, idx) => (
+                      <div key={u.unitId} onClick={() => openUnit(u)} style={cardStyleFor(u.unitId, rotL[idx])}>
+                        <div style={{ position: 'absolute', top: -9, left: '50%', transform: 'translateX(-50%) rotate(-4deg)', width: 52, height: 18, background: c.dark, opacity: .55, borderRadius: 2, pointerEvents: 'none' }} />
+                        <div className="round-font" style={{ width: '100%', fontSize: unitFontSize(u.unitId), fontWeight: 700, color: '#3a362f', pointerEvents: 'none', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}><Ruby t={u.unitId} r={u.unitRuby} /></div>
+                      </div>
+                    ))}
+                  </div>
+                  <div style={{ ...pageStyle(rightUnits.length), right: 0 }}>
+                    {rightUnits.map((u, idx) => (
+                      <div key={u.unitId} onClick={() => openUnit(u)} style={cardStyleFor(u.unitId, rotR[idx])}>
+                        <div style={{ position: 'absolute', top: -9, left: '50%', transform: 'translateX(-50%) rotate(3deg)', width: 52, height: 18, background: c.dark, opacity: .55, borderRadius: 2, pointerEvents: 'none' }} />
+                        <div className="round-font" style={{ width: '100%', fontSize: unitFontSize(u.unitId), fontWeight: 700, color: '#3a362f', pointerEvents: 'none', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}><Ruby t={u.unitId} r={u.unitRuby} /></div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
             </div>
+
+            {[0, 1, 2, 3, 4, 5, 6, 7].map(i => (
+              <div key={i} style={styleFromText(screenStripStyle(cardFlip === 'opening' ? 'opening' : 'idle', i, 8))} />
+            ))}
+            <div style={styleFromText(gradeOverlayStyle(cardFlip === 'opening' ? 'opening' : 'idle'))} />
           </div>
         );
       }
 
       const activeItems = rawData.filter(d => d.grade === activeGrade && d.unitId === activeUnit).sort((a, b) => (Number(a.orderNo) || 0) - (Number(b.orderNo) || 0));
+      const wordGradeIdx = Math.max(0, [...new Set(rawData.map(d => d.grade))].sort().indexOf(activeGrade));
+      const wordC = GRADE_PALETTE[wordGradeIdx % GRADE_PALETTE.length];
 
       return (
-        <div className="min-h-screen pb-20 bg-slate-50">
+        <div className="min-h-screen pb-20 relative">
+          <div
+            style={{
+              position: 'fixed', inset: 0, zIndex: -1,
+              background: 'linear-gradient(120deg, oklch(96% .03 300) 0%, oklch(96% .03 160) 35%, oklch(96% .04 60) 70%, oklch(96% .03 30) 100%)'
+            }}
+          />
+
           <div className="sticky top-0 z-40 bg-white/90 backdrop-blur-xl border-b p-4 flex justify-between items-center px-8">
-            <button onClick={() => setView('home')} className="p-3 bg-slate-100 rounded-full"><Icons.Back /></button>
-            <button onClick={() => setShowGridMenu(true)} className="flex items-center gap-2 px-8 py-3 bg-indigo-500 text-white rounded-2xl font-black shadow-lg shadow-indigo-200">
+            <button onClick={() => setView('home')} className="back-btn p-3 bg-slate-100 rounded-full text-slate-700 active:scale-95 transition-transform"><Icons.Back /></button>
+            <button onClick={() => setShowGridMenu(true)} className="mokuji-btn flex items-center gap-2 px-8 py-3 bg-indigo-500 text-white rounded-2xl font-black shadow-lg shadow-indigo-200 active:scale-95 transition-transform">
               <Icons.Grid /><span>もくじ</span>
             </button>
           </div>
@@ -889,9 +1071,12 @@
           )}
 
           <div className="max-w-5xl mx-auto p-6 mt-8">
-            <h2 className="text-5xl font-black text-slate-900 mb-12 px-6 border-l-8 border-indigo-500">
-              <Ruby t={activeUnit} r={activeItems[0]?.unitRuby} />
-            </h2>
+            <div style={{ position: 'relative', display: 'inline-block', background: '#fffef9', borderRadius: '3px', padding: '20px 34px', boxShadow: '0 5px 10px rgba(0,0,0,.14), 0 1px 0 rgba(255,255,255,.6) inset', border: '1px solid rgba(0,0,0,.04)', marginBottom: 48 }}>
+              <div style={{ position: 'absolute', top: -10, left: '50%', transform: 'translateX(-50%) rotate(-3deg)', width: 68, height: 20, background: wordC.dark, opacity: .55, borderRadius: 2, pointerEvents: 'none' }} />
+              <h2 className="round-font" style={{ fontSize: 40, fontWeight: 700, color: '#3a362f' }}>
+                <Ruby t={activeUnit} r={activeItems[0]?.unitRuby} />
+              </h2>
+            </div>
             {activeItems.map((item, i) => <WordCard key={i} item={item} index={i} />)}
           </div>
         </div>
