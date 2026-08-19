@@ -59,4 +59,5 @@ clasp deploy    # Webアプリとして（再）デプロイ
 
 - [Design.md](Design.md) — デザインシステムのクイックリファレンス（新規画面実装時のガイドライン含む）
 - `Design_Guideline/Jzukan Design System.dc.html` — 正式なデザインシステム（HTML、ブラウザ表示用）
+- [Migration_Plan.md](Migration_Plan.md) — 移行計画書（移行先の見直し中。GAS固有の制約・移行時に引き継ぐ要件をまとめている）
 - [Security_Checklist.md](Security_Checklist.md) — このアプリの脅威モデル（ログイン不要の匿名公開Webアプリ・スプレッドシートのデータ露出・CDN依存のサプライチェーンリスク）を踏まえたセキュリティチェックリスト
