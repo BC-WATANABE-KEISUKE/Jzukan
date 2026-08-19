@@ -126,13 +126,29 @@
       background: #000; 
       overflow: hidden; 
     }
+    /* 動画のときだけ、上64px(Driveのファイル名バー・新しいウィンドウで開くボタン)を隠し、
+       映像の下に64pxの帯を確保してDriveの操作バー(再生ボタン等)を全部見えるようにする。 */
+    .video-viewport.is-video { 
+      aspect-ratio: auto; 
+      height: 0; 
+      padding-bottom: calc(56.25% + 64px); 
+    }
     .video-frame { 
       position: absolute; 
-      top: -48px; 
+      top: -64px; 
       left: 0; 
       width: 100%; 
-      height: calc(100% + 96px); 
+      height: calc(100% + 64px); 
       border: 0;
+    }
+    /* 念のための保険: 万一Driveのボタンがはみ出しても、映像上端の帯はタップを通さない */
+    .video-shield { 
+      position: absolute; 
+      top: 0; 
+      left: 0; 
+      right: 0; 
+      height: 28px; 
+      z-index: 5; 
     }
     
     .img-btn { background: rgba(255,255,255,0.9); width: 50px; height: 50px; border-radius: 25px; font-weight: bold; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.15); pointer-events: auto; }
@@ -290,11 +306,14 @@
               </span>
             </div>
 
-            <div className="video-viewport">
+            <div className={isVideo ? "video-viewport is-video" : "video-viewport"}>
               {ids.length === 0 ? (
                 <div className="w-full h-full flex items-center justify-center text-slate-400 font-bold bg-slate-100">じゅんび中</div>
               ) : isVideo ? (
-                <iframe src={`https://drive.google.com/file/d/${ids[0]}/preview`} className="video-frame" allow="autoplay"></iframe>
+                <React.Fragment>
+                  <iframe src={`https://drive.google.com/file/d/${ids[0]}/preview`} className="video-frame" allow="autoplay"></iframe>
+                  <div className="video-shield"></div>
+                </React.Fragment>
               ) : (
 <div className="w-full h-full relative flex items-center justify-center bg-white overflow-hidden">
   {imgFit === 'contain' && (
@@ -1001,7 +1020,7 @@
                     {leftUnits.map((u, idx) => (
                       <div key={u.unitId} onClick={() => openUnit(u)} style={cardStyleFor(u.unitId, rotL[idx])}>
                         <div style={{ position: 'absolute', top: -9, left: '50%', transform: 'translateX(-50%) rotate(-4deg)', width: 52, height: 18, background: c.dark, opacity: .55, borderRadius: 2, pointerEvents: 'none' }} />
-                        <div className="round-font" style={{ width: '100%', fontSize: unitFontSize(u.unitId), fontWeight: 700, color: '#3a362f', pointerEvents: 'none', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}><Ruby t={u.unitId} r={u.unitRuby} /></div>
+                        <div className="font-black" style={{ width: '100%', fontSize: unitFontSize(u.unitId), color: '#3a362f', pointerEvents: 'none', whiteSpace: 'nowrap' }}><Ruby t={u.unitId} r={u.unitRuby} /></div>
                       </div>
                     ))}
                   </div>
@@ -1009,7 +1028,7 @@
                     {rightUnits.map((u, idx) => (
                       <div key={u.unitId} onClick={() => openUnit(u)} style={cardStyleFor(u.unitId, rotR[idx])}>
                         <div style={{ position: 'absolute', top: -9, left: '50%', transform: 'translateX(-50%) rotate(3deg)', width: 52, height: 18, background: c.dark, opacity: .55, borderRadius: 2, pointerEvents: 'none' }} />
-                        <div className="round-font" style={{ width: '100%', fontSize: unitFontSize(u.unitId), fontWeight: 700, color: '#3a362f', pointerEvents: 'none', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}><Ruby t={u.unitId} r={u.unitRuby} /></div>
+                        <div className="font-black" style={{ width: '100%', fontSize: unitFontSize(u.unitId), color: '#3a362f', pointerEvents: 'none', whiteSpace: 'nowrap' }}><Ruby t={u.unitId} r={u.unitRuby} /></div>
                       </div>
                     ))}
                   </div>
