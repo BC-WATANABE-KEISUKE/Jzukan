@@ -150,6 +150,41 @@
       height: 28px; 
       z-index: 5; 
     }
+
+    /* 動画が見られないときの再読み込み案内（動画カードのみ・映像の下に常設） */
+    .video-retry-row { 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      gap: 0.75rem; 
+      padding: 0.625rem 1.25rem; 
+      background: #f8fafc; 
+      border-top: 1px solid #f1f5f9; 
+    }
+    .video-retry-text { 
+      font-size: 0.875rem; 
+      font-weight: 700; 
+      color: #64748b; 
+      white-space: nowrap; 
+    }
+    .video-retry-btn { 
+      display: inline-flex; 
+      align-items: center; 
+      gap: 0.4rem; 
+      background: #eef2ff; 
+      color: #4f46e5; 
+      font-size: 1rem; 
+      font-weight: 800; 
+      padding: 0.6rem 1.25rem; 
+      border-radius: 9999px; 
+      white-space: nowrap; 
+      transition: transform .13s ease; 
+    }
+    /* 🛠️ 「もういちど よみこむ」ボタン: 押下時にインディゴ淡色背景を保つ */
+    button.video-retry-btn:focus, button.video-retry-btn:active { 
+      background-color: #eef2ff !important; 
+      transform: scale(0.94); 
+    }
     
     .img-btn { background: rgba(255,255,255,0.9); width: 50px; height: 50px; border-radius: 25px; font-weight: bold; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.15); pointer-events: auto; }
   </style>
@@ -282,6 +317,7 @@
   const hasMeaning = item.meaning && String(item.meaning).trim() !== "" && String(item.meaning) !== "undefined";
 
   const [imgFit, setImgFit] = useState('contain');
+  const [videoKey, setVideoKey] = useState(0);
 
   useEffect(() => {
     setImgFit('contain');
@@ -311,7 +347,7 @@
                 <div className="w-full h-full flex items-center justify-center text-slate-400 font-bold bg-slate-100">じゅんび中</div>
               ) : isVideo ? (
                 <React.Fragment>
-                  <iframe src={`https://drive.google.com/file/d/${ids[0]}/preview`} className="video-frame" allow="autoplay"></iframe>
+                  <iframe key={videoKey} src={`https://drive.google.com/file/d/${ids[0]}/preview`} className="video-frame" loading="lazy" allow="autoplay"></iframe>
                   <div className="video-shield"></div>
                 </React.Fragment>
               ) : (
@@ -339,6 +375,13 @@
               )}
             </div>
           </div>
+
+          {isVideo && ids.length > 0 && (
+            <div className="video-retry-row">
+              <span className="video-retry-text">うまく みられない ときは</span>
+              <button className="video-retry-btn" onClick={() => setVideoKey(videoKey + 1)}>↻ もういちど よみこむ</button>
+            </div>
+          )}
 
           {hasMeaning && (
             <div className="px-8 py-5 text-2xl font-black text-slate-900 leading-tight border-t border-slate-100 bg-white">
