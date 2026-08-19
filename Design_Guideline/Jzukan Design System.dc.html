@@ -148,7 +148,12 @@
 
       <div style="background:#fff;border:1px solid #e2e8f0;border-radius:24px;padding:32px;display:flex;flex-direction:column;gap:8px;">
         <div style="font-size:12px;font-weight:900;color:#94a3b8;">可変長テキストの縮小フォールバック</div>
-        <p style="font-size:13px;font-weight:600;color:#64748b;line-height:1.8;margin:0;">単元カードの単元名など、スプレッドシート由来で長さが不定なテキストは、文字数に応じてフォントサイズを段階的に縮小します（例: 21px→17px→14px）。それでも収まらない場合は <code style="background:#f1f5f9;padding:2px 6px;border-radius:6px;">text-overflow: ellipsis</code> で1行に収め、折り返しによるカードの高さ崩れを避けます。</p>
+        <p style="font-size:13px;font-weight:600;color:#64748b;line-height:1.8;margin:0;">単元カードの単元名など、スプレッドシート由来で長さが不定なテキストは、文字数に応じてフォントサイズを段階的に縮小し（例: 21px→17px→14px）、<code style="background:#f1f5f9;padding:2px 6px;border-radius:6px;">white-space: nowrap</code> で1行に固定します。折り返しによるカードの高さ崩れを避けるためです。単元選択の付箋カードの単元名は、丸みの強い書体だと読みにくかったため <code style="background:#f1f5f9;padding:2px 6px;border-radius:6px;">.round-font</code> を使わず、もくじ等と同じ <code style="background:#f1f5f9;padding:2px 6px;border-radius:6px;">font-black</code> の太字sans-serifに統一しています（本モチーフの中で唯一の書体例外）。</p>
+      </div>
+
+      <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:20px;padding:20px 24px;">
+        <div style="font-size:12px;font-weight:900;color:#b91c1c;">⚠ ルビ付きテキストに overflow: hidden を使わない</div>
+        <p style="font-size:13px;font-weight:600;color:#7f1d1d;line-height:1.8;margin:6px 0 0;">1行省略のために <code style="background:#fff;padding:1px 5px;border-radius:5px;">overflow: hidden</code> + <code style="background:#fff;padding:1px 5px;border-radius:5px;">text-overflow: ellipsis</code> を付けたところ、ふりがな（ルビ）が文字の上に生成する分の高さがクリップされ、見切れる不具合が発生した。ルビを伴うテキストのはみ出し対策は、フォントサイズの動的縮小 + <code style="background:#fff;padding:1px 5px;border-radius:5px;">white-space: nowrap</code> のみで行い、<code style="background:#fff;padding:1px 5px;border-radius:5px;">overflow: hidden</code> は使わないこと。</p>
       </div>
     </section>
 
@@ -243,11 +248,11 @@
           <div style="flex:1;display:flex;flex-direction:column;gap:12px;padding-right:10px;">
             <div style="position:relative;background:#fffef9;border-radius:3px;padding:14px 16px;box-shadow:0 5px 10px rgba(0,0,0,0.14);transform:rotate(-1.5deg);">
               <div style="position:absolute;top:-8px;left:50%;transform:translateX(-50%) rotate(-4deg);width:44px;height:14px;background:oklch(38% .15 150);opacity:0.55;border-radius:2px;"></div>
-              <div style="font-family:'Klee One',serif;font-weight:600;font-size:16px;color:#3a362f;">こまを楽しむ</div>
+              <div style="font-weight:900;font-size:16px;color:#3a362f;">こまを楽しむ</div>
             </div>
             <div style="position:relative;background:#fffef9;border-radius:3px;padding:14px 16px;box-shadow:0 5px 10px rgba(0,0,0,0.14);transform:rotate(1deg);">
               <div style="position:absolute;top:-8px;left:50%;transform:translateX(-50%) rotate(-4deg);width:44px;height:14px;background:oklch(38% .15 150);opacity:0.55;border-radius:2px;"></div>
-              <div style="font-family:'Klee One',serif;font-weight:600;font-size:16px;color:#3a362f;">まいごのかぎ</div>
+              <div style="font-weight:900;font-size:16px;color:#3a362f;">まいごのかぎ</div>
             </div>
           </div>
           <div style="flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;padding-left:10px;gap:6px;">
@@ -255,7 +260,7 @@
             <div style="width:9px;height:9px;border-radius:999px;background:#e3ddce;"></div>
           </div>
         </div>
-        <div style="font-size:12px;font-weight:600;color:#94a3b8;">単元選択も「本」のモチーフで統一。見開いた本の左右ページに、単元名を書いた付箋風カード（テープ留め・わずかな回転・紙のような小さい角丸）を最大4件ずつ計8件まで配置。9件以上は8件ごとにページ分割し、矢印とドットで送る。単元名はスプレッドシートの実データを<code style="background:#f1f5f9;padding:1px 5px;border-radius:5px;">Ruby</code>コンポーネントでふりがな表示。カードタップで press → 白フェード（学年選択と同じストライプ演出を再利用）→ 単語一覧へ遷移。</div>
+        <div style="font-size:12px;font-weight:600;color:#94a3b8;">単元選択も「本」のモチーフで統一。見開いた本の左右ページに、単元名を書いた付箋風カード（テープ留め・わずかな回転・紙のような小さい角丸）を最大4件ずつ計8件まで配置。9件以上は8件ごとにページ分割し、矢印とドットで送る。単元名はスプレッドシートの実データを<code style="background:#f1f5f9;padding:1px 5px;border-radius:5px;">Ruby</code>コンポーネントでふりがな表示し、文字は丸ゴシックではなく <code style="background:#f1f5f9;padding:1px 5px;border-radius:5px;">font-black</code>（他画面と同じ太字sans-serif）。カードタップで press → 白フェード（学年選択と同じストライプ演出を再利用）→ 単語一覧へ遷移。</div>
       </div>
 
       <div style="display:flex;flex-direction:column;gap:12px;">
