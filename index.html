@@ -201,6 +201,16 @@
       X: () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M18 6 6 18M6 6l12 12"/></svg>
     };
 
+    /*
+     * ふりがな（ルビ）表示コンポーネント。t = 表記（漢字かな交じり）、r = 読み（全文のひらがな）。
+     * 3通りの分岐で描画する:
+     *   1) t がすでに <ruby> / <span> / エスケープされたHTMLを含む場合 … そのままHTMLとして描画（&lt; はデコードして戻す）
+     *   2) 読み r が無い or t と同一 … プレーンテキストとして描画
+     *   3) それ以外 … match() で「漢字のかたまり」と「その読み」をメモ化再帰で対応付け、
+     *      漢字部分にだけ <rt>（ルビ）を振る。対応付けに失敗（match が null）したときは
+     *      「末尾から数えた読みの長さ」で機械的に割り振るフォールバック整列を使う。
+     * このファイル中で最も複雑なロジック。
+     */
     const Ruby = ({ t, r }) => {
       if (!t) return null;
 
@@ -227,6 +237,9 @@
       const isKanji = (char) => /[\u4E00-\u9FFF]/.test(char);
       const memo = {};
 
+      // \u8868\u8A18\u306E tIdx \u6587\u5B57\u76EE\u30FB\u8AAD\u307F\u306E rIdx \u6587\u5B57\u76EE\u304B\u3089\u5148\u3092\u5BFE\u5FDC\u4ED8\u3051\u308B\u3002
+      // \u304B\u306A\u6587\u5B57\u306F\u8AAD\u307F\u30681\u6587\u5B57\u305A\u3064\u4E00\u81F4\u3055\u305B\u3001\u6F22\u5B57\u306F\u9023\u7D9A\u3059\u308B\u304B\u305F\u307E\u308A\u3054\u3068\u306B\u8AAD\u307F\u306E\u90E8\u5206\u6587\u5B57\u5217\u3092\u7DCF\u5F53\u305F\u308A\u3067\u5272\u308A\u5F53\u3066\u308B\u3002
+      // \u5BFE\u5FDC\u304C\u53D6\u308C\u308C\u3070 [{isKanji, text, ruby?}, ...] \u3092\u3001\u53D6\u308C\u306A\u3051\u308C\u3070 null \u3092\u8FD4\u3059\uFF08\u7D50\u679C\u306F memo \u306B\u30AD\u30E3\u30C3\u30B7\u30E5\uFF09\u3002
       const match = (tIdx, rIdx) => {
         const key = `${tIdx},${rIdx}`;
         if (key in memo) return memo[key];
@@ -268,6 +281,8 @@
 
       const alignment = match(0, 0);
 
+      // フォールバック整列: 正確な対応付けに失敗したときは
+      // 「読みの総長 − 表記の総長 + 漢字かたまりの長さ」を各漢字かたまりの読みの長さとみなして割り振る。
       if (alignment === null) {
         const parts = [];
         let i = 0, j = 0;
@@ -310,6 +325,13 @@
       );
     };
 
+    /*
+     * 単語カード1枚。item はスプレッドシートの1行（word / furigana / meaning / id / type）。
+     * item.id はカンマ区切りで複数のGoogleドライブ・ファイルIDを持てる。
+     *   - type に "video" を含む … drive.google.com の preview iframe を表示（+ 再読み込みボタン）
+     *   - それ以外 … ドライブのサムネイル画像。横長画像は object-cover、縦長は object-contain に自動切替。
+     *     IDが複数あれば左右の矢印で切り替える。
+     */
     const WordCard = ({ item, index }) => {
   const [imgIdx, setImgIdx] = useState(0);
   const ids = String(item.id || "").split(',').map(s => s.trim()).filter(Boolean);
@@ -667,6 +689,8 @@
       <div style="position:absolute;left:0;right:0;top:508px;height:7px;z-index:0;opacity:.35;background:#c7b998"></div>
     `;
 
+    // "prop: value; prop2: value2" 形式のCSS文字列を React の style オブジェクト（camelCaseキー）に変換する。
+    // 下のアニメーション用スタイル関数が文字列でスタイルを組み立てているため、その橋渡しに使う。
     const styleFromText = (css) => {
       const obj = {};
       css.split(';').forEach(rule => {
@@ -697,6 +721,8 @@
       return 'transform:scale(1);transition:transform .15s ease;position:relative';
     };
 
+    // 本が開く瞬間の「ページがめくれる」演出。画面を縦に total 枚の短冊へ分割し、
+    // phase === 'opening' のときだけ右端の短冊から順に rotateY(-140deg) → 0 へ倒し込む（index ごとに delay をずらす）。
     const screenStripStyle = (phase, index, total) => {
       const delay = (total - 1 - index) * 30;
       const color = index % 2 === 0 ? '#fffdf7' : '#f7f1e4';
@@ -707,6 +733,7 @@
       return base + `opacity:1;transform:rotateY(0deg) skewY(0deg);transition:transform .2s cubic-bezier(.45,.35,.2,1) ${delay}ms,opacity 1ms linear ${delay}ms`;
     };
 
+    // ページめくり演出の仕上げに画面全体を白でフェードさせ、次の画面への切り替わりを隠すオーバーレイ。
     const gradeOverlayStyle = (phase) => {
       if (phase === 'opening') {
         return 'position:absolute;inset:0;background:#fff;opacity:1;transition:opacity .2s ease .34s;z-index:25;pointer-events:none';
@@ -714,6 +741,15 @@
       return 'position:absolute;inset:0;background:#fff;opacity:0;transition:opacity .25s ease;z-index:7;pointer-events:none';
     };
 
+    /*
+     * ルートコンポーネント。単一の状態機械としてアプリ全体を制御する。
+     *   view: 'grade'（学年選択）→ 'home'（単元一覧の見開き）→ 'unit'（単語カード一覧）。'about' は説明ページ。
+     *   uiPhase / pressedGrade: 本を開くアニメーションの進行状態。
+     *   cardPress / cardFlip: 単元カードを開くアニメーションの進行状態。
+     *   gradeScale: 固定デザインサイズ(860×620)を画面サイズに合わせて拡大するための倍率。
+     * マウント時に google.script.run.getSheetData() を1回呼び、全データを rawData に保持。
+     * 以降の画面はすべて rawData をクライアント側でフィルタ・整形して描画する（サーバー往復は初回のみ）。
+     */
     const App = () => {
       const [view, setView] = useState('grade');
       const [activeGrade, setActiveGrade] = useState(null);
@@ -731,6 +767,8 @@
       const [cardPress, setCardPress] = useState(null);
       const [cardFlip, setCardFlip] = useState(null);
 
+      // 画面サイズが変わるたびに、固定デザイン(860×620)を収めるスケール倍率を計算し直す。
+      // 初回描画直後にレイアウトが安定しないことがあるため 300ms 後にも一度やり直す。
       useEffect(() => {
         const computeScale = () => {
           const w = document.documentElement.clientWidth || window.innerWidth;
@@ -749,6 +787,8 @@
         };
       }, []);
 
+      // 学年（本）をタップしたときの4段階アニメーション:
+      // pressing（へこむ 130ms）→ cover（浮き上がる 380ms）→ opening（ページめくり 480ms）→ home画面へ。
       const pressGrade = (g) => {
         if (uiPhase !== 'idle') return;
         setPressedGrade(g);
@@ -768,9 +808,10 @@
         }, 130);
       };
 
+      // 起動時に一度だけサーバーから全データを取得する。成功時は rawData に格納、失敗時はエラー画面を表示。
       useEffect(() => {
         google.script.run
-          .withSuccessHandler(data => { 
+          .withSuccessHandler(data => {
             setRawData(data); 
             setLoading(false); 
           })
@@ -800,6 +841,7 @@
         return <AboutPage onBack={() => setView('grade')} />;
       }
 
+      // --- 学年選択画面: 本棚に学年ごとの「本」を並べ、タップで pressGrade → home へ ---
       if (view === 'grade') {
         const availableGrades = [...new Set(rawData.map(d => d.grade))].sort();
         return (
@@ -919,6 +961,7 @@
       }
 
 
+      // --- 単元一覧画面: 開いた本の見開きに単元カードを最大8枚（左右4枚ずつ）並べる。9枚以上はページめくり ---
       if (view === 'home') {
         const availableGrades = [...new Set(rawData.map(d => d.grade))].sort();
         const gradeIdx = Math.max(0, availableGrades.indexOf(activeGrade));
@@ -934,6 +977,7 @@
         const rotL = [-2, 1.5, -1, 1.2];
         const rotR = [2, -1.5, 1, -1.2];
 
+        // 単元名のHTMLタグ・エスケープを除いた実際の文字数を数え、長い名前ほど小さいフォントサイズを返す。
         const plainLen = (s) => {
           if (typeof s !== 'string') return 0;
           let t = s;
@@ -947,6 +991,7 @@
           return 21;
         };
 
+        // 見開きページの切り替え（delta = +1 / -1）。160msだけフェードアウトさせてからページ番号を更新する。
         const turnUnitPage = (delta) => {
           if (cardPress || cardFlip) return;
           setUnitFade(true);
@@ -956,6 +1001,7 @@
           }, 160);
         };
 
+        // 単元カードをタップしたときのアニメーション: cardPress（へこむ 130ms）→ cardFlip 'opening'（ページめくり 620ms）→ unit画面へ。
         const openUnit = (unit) => {
           if (cardPress || cardFlip) return;
           setCardPress(unit.unitId);
@@ -971,6 +1017,7 @@
           }, 130);
         };
 
+        // 単元カード1枚分のインラインスタイル。rot は付箋のように少し傾ける角度。押下中は縮小＋傾き控えめ。
         const cardStyleFor = (id, rot) => {
           const pressed = cardPress === id;
           return {
@@ -1087,6 +1134,7 @@
         );
       }
 
+      // --- 単語カード一覧画面（view === 'unit'）: 選択中の学年・単元の行を orderNo 順に並べ、WordCard を縦に描画。「もくじ」から各カードへジャンプ ---
       const activeItems = rawData.filter(d => d.grade === activeGrade && d.unitId === activeUnit).sort((a, b) => (Number(a.orderNo) || 0) - (Number(b.orderNo) || 0));
       const wordGradeIdx = Math.max(0, [...new Set(rawData.map(d => d.grade))].sort().indexOf(activeGrade));
       const wordC = GRADE_PALETTE[wordGradeIdx % GRADE_PALETTE.length];
