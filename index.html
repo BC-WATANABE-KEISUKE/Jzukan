@@ -15,6 +15,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@400;600&swap" rel="stylesheet">
 
   <style>
+    /* 共通出典フッターの高さ（学年選択・単元一覧は、この分だけ下を空けて表示する） */
+    :root { --source-bar-h: calc(28px + env(safe-area-inset-bottom, 0px)); }
     /* 🛠️ 【アプリ全体の背景色指定：bodyのみに限定】 */
     body {
       background-color: #f1f5f9 !important;
@@ -421,6 +423,25 @@
       edition: '令和6年度版'
     };
     const TEXTBOOK_SOURCE_TEXT = `${TEXTBOOK_SOURCE.publisher}${TEXTBOOK_SOURCE.title}（${TEXTBOOK_SOURCE.edition}）`;
+    // 出典フッターの高さ(px)。CSS変数 --source-bar-h の数値部分と揃えること（スケール計算用）。
+    const SOURCE_BAR_H = 28;
+
+    /* 全画面共通の出典フッター。画面下部に固定表示し、タップは下の画面へ通す。モーダルのバックドロップ(z-50)より下。 */
+    const SourceFooter = () => (
+      <div
+        style={{
+          position: 'fixed', left: 0, right: 0, bottom: 0, zIndex: 30,
+          height: 'var(--source-bar-h)', boxSizing: 'border-box',
+          paddingBottom: 'env(safe-area-inset-bottom, 0px)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          background: 'rgba(255,255,255,.78)', borderTop: '1px solid rgba(0,0,0,.06)',
+          fontSize: '12px', lineHeight: 1.4, color: '#555', textAlign: 'center',
+          pointerEvents: 'none'
+        }}
+      >
+        出典：{TEXTBOOK_SOURCE_TEXT}
+      </div>
+    );
 
     /* 🌟 教材について説明する画面コンポーネント（GASアプリ適合版） */
     const AboutPage = ({ onBack }) => {
@@ -452,7 +473,7 @@
       ];
 
       return (
-        <div className="min-h-screen w-full antialiased selection:bg-transparent relative">
+        <div className="min-h-screen w-full antialiased selection:bg-transparent relative" style={{ paddingBottom: 'var(--source-bar-h)' }}>
           <div
             style={{
               position: 'fixed', inset: 0, zIndex: -1,
@@ -792,7 +813,7 @@
         const computeScale = () => {
           const w = document.documentElement.clientWidth || window.innerWidth;
           const h = document.documentElement.clientHeight || window.innerHeight;
-          setGradeScale(Math.min(w / DESIGN_W, h / DESIGN_H));
+          setGradeScale(Math.min(w / DESIGN_W, (h - SOURCE_BAR_H) / DESIGN_H));
         };
         computeScale();
         window.addEventListener('resize', computeScale);
@@ -855,19 +876,22 @@
         </div>
       );
 
+      // 操作可能な4画面（grade/home/unit/about）にだけ共通の出典フッターを付ける（LOADING・エラー画面は対象外）
+      const withFooter = (node) => <>{node}<SourceFooter /></>;
+
       /* 🌟 画面管理ステートの分岐 */
       if (view === 'about') {
-        return <AboutPage onBack={() => setView('grade')} />;
+        return withFooter(<AboutPage onBack={() => setView('grade')} />);
       }
 
       // --- 学年選択画面: 本棚に学年ごとの「本」を並べ、タップで pressGrade → home へ ---
       if (view === 'grade') {
         const availableGrades = [...new Set(rawData.map(d => d.grade))].sort();
-        return (
+        return withFooter(
           <div
             style={{
               position: 'fixed',
-              inset: 0,
+              top: 0, left: 0, right: 0, bottom: 'var(--source-bar-h)', zIndex: 40, // 出典フッター(z-30)より上にして、モーダルのバックドロップがフッターも覆うようにする
               overflow: 'hidden',
               background: 'linear-gradient(120deg, oklch(96% .03 300) 0%, oklch(96% .03 160) 35%, oklch(96% .04 60) 70%, oklch(96% .03 30) 100%)'
             }}
@@ -940,9 +964,6 @@
               </div>
 
               <div style={{ padding: '14px 8px 18px', textAlign: 'center', position: 'relative', top: '8px', zIndex: 1 }}>
-                <p style={{ fontSize: '12px', lineHeight: 1.6, color: '#555', margin: '0 0 4px', maxWidth: '760px', marginInline: 'auto' }}>
-                  出典：{TEXTBOOK_SOURCE_TEXT}
-                </p>
                 <p style={{ fontSize: '11px', lineHeight: 1.6, color: '#948f84', margin: '0 0 8px', maxWidth: '760px', marginInline: 'auto' }}>
                   本教材のイラストは、生成AIを用いて制作しています。動画についても一部、生成AIで作成したものを使用しています。なお、実在するものを描いたイラストの中には、伝わりやすさを優先し、細部を簡略化して表現しているものがあります。使用素材に関する詳細は、教育委員会にて一元管理しています。
                 </p>
@@ -1066,10 +1087,10 @@
           transition: unitFade ? 'opacity .16s ease, transform .16s ease' : 'opacity .2s ease .05s, transform .2s ease .05s'
         });
 
-        return (
+        return withFooter(
           <div
             style={{
-              position: 'fixed', inset: 0, overflow: 'hidden',
+              position: 'fixed', top: 0, left: 0, right: 0, bottom: 'var(--source-bar-h)', zIndex: 40, overflow: 'hidden',
               background: 'linear-gradient(120deg, oklch(96% .03 300) 0%, oklch(96% .03 160) 35%, oklch(96% .04 60) 70%, oklch(96% .03 30) 100%)'
             }}
           >
@@ -1161,8 +1182,8 @@
       const wordGradeIdx = Math.max(0, [...new Set(rawData.map(d => d.grade))].sort().indexOf(activeGrade));
       const wordC = GRADE_PALETTE[wordGradeIdx % GRADE_PALETTE.length];
 
-      return (
-        <div className="min-h-screen pb-20 relative">
+      return withFooter(
+        <div className="min-h-screen relative" style={{ paddingBottom: 'calc(5rem + var(--source-bar-h))' }}>
           <div
             style={{
               position: 'fixed', inset: 0, zIndex: -1,
