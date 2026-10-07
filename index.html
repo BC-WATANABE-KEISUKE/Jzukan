@@ -923,7 +923,7 @@
               </div>
 
               {/* 🌟 本棚から学年（本）を選ぶUI。タップすると本が浮き上がり、開くように「home」画面へ遷移する */}
-              <div className="flex-1 flex items-end justify-center gap-4 md:gap-6 flex-wrap pt-6 relative z-10">
+              <div className="flex-1 flex items-end justify-center gap-4 md:gap-6 flex-wrap pt-6 relative z-10" style={{ marginBottom: '111px' }}>
                 {availableGrades.map((g, i) => {
                   const c = GRADE_PALETTE[i % GRADE_PALETTE.length];
                   const digit = (g.match(/\d/) || [''])[0];
@@ -963,7 +963,8 @@
                 })}
               </div>
 
-              <div style={{ padding: '14px 8px 18px', textAlign: 'center', position: 'relative', top: '8px', zIndex: 1 }}>
+              {/* 注記は本棚(下端515px)のすぐ下に絶対配置し、本の位置が注記の高さに左右されないようにする。下端(出典フッター側)は余白を残す */}
+              <div style={{ position: 'absolute', left: '34px', right: '34px', top: '525px', padding: '0 8px', textAlign: 'center', zIndex: 1 }}>
                 <p style={{ fontSize: '11px', lineHeight: 1.6, color: '#948f84', margin: '0 0 8px', maxWidth: '760px', marginInline: 'auto' }}>
                   本教材のイラストは、生成AIを用いて制作しています。動画についても一部、生成AIで作成したものを使用しています。なお、実在するものを描いたイラストの中には、伝わりやすさを優先し、細部を簡略化して表現しているものがあります。使用素材に関する詳細は、教育委員会にて一元管理しています。
                 </p>
