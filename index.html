@@ -16,7 +16,7 @@
 
   <style>
     /* 共通出典フッターの高さ（学年選択・単元一覧は、この分だけ下を空けて表示する） */
-    :root { --source-bar-h: calc(28px + env(safe-area-inset-bottom, 0px)); }
+    :root { --source-bar-h: calc(16px + env(safe-area-inset-bottom, 0px)); }
     /* 🛠️ 【アプリ全体の背景色指定：bodyのみに限定】 */
     body {
       background-color: #f1f5f9 !important;
@@ -424,7 +424,7 @@
     };
     const TEXTBOOK_SOURCE_TEXT = `${TEXTBOOK_SOURCE.publisher}${TEXTBOOK_SOURCE.title}（${TEXTBOOK_SOURCE.edition}）`;
     // 出典フッターの高さ(px)。CSS変数 --source-bar-h の数値部分と揃えること（スケール計算用）。
-    const SOURCE_BAR_H = 28;
+    const SOURCE_BAR_H = 16;
 
     /* 全画面共通の出典フッター。画面下部に固定表示し、タップは下の画面へ通す。モーダルのバックドロップ(z-50)より下。 */
     const SourceFooter = () => (
@@ -435,7 +435,7 @@
           paddingBottom: 'env(safe-area-inset-bottom, 0px)',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           background: 'rgba(255,255,255,.78)', borderTop: '1px solid rgba(0,0,0,.06)',
-          fontSize: '12px', lineHeight: 1.4, color: '#555', textAlign: 'center',
+          fontSize: '12px', lineHeight: 1, color: '#555', textAlign: 'center',
           pointerEvents: 'none'
         }}
       >
