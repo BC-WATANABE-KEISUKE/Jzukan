@@ -414,6 +414,14 @@
       );
     };
 
+    // 使用教科書の出典表記。版・学年が変わった場合はここだけを直せば全画面に反映される。
+    const TEXTBOOK_SOURCE = {
+      publisher: '光村図書出版',
+      title: '『国語 2〜4年』',
+      edition: '令和6年度版'
+    };
+    const TEXTBOOK_SOURCE_TEXT = `${TEXTBOOK_SOURCE.publisher}${TEXTBOOK_SOURCE.title}（${TEXTBOOK_SOURCE.edition}）`;
+
     /* 🌟 教材について説明する画面コンポーネント（GASアプリ適合版） */
     const AboutPage = ({ onBack }) => {
       const notIncluded = [
@@ -522,6 +530,17 @@
               </p>
               <p className="text-sm md:text-base font-medium text-slate-700 leading-relaxed mt-4 border-t border-indigo-200 pt-4">
                 動作化や個別の説明のほうが伝わりやすい語彙、状況に応じた配慮が必要な語彙については、先生方の現場でのご判断と工夫によって、より良い授業につなげていただければと思います。
+              </p>
+            </div>
+
+            {/* 教科書の出典 */}
+            <div className="bg-white rounded-3xl shadow-md border border-slate-200 p-8 md:p-10 text-left">
+              <h3 className="text-2xl font-extrabold text-slate-900 mb-4">教科書の出典について</h3>
+              <p className="text-base font-bold text-slate-700 leading-relaxed">
+                このアプリで取り上げている単元名・ことばは、次の教科書を出典としています。
+              </p>
+              <p className="text-base font-bold text-slate-700 leading-relaxed mt-2">
+                {TEXTBOOK_SOURCE_TEXT}
               </p>
             </div>
           </div>
@@ -920,7 +939,10 @@
                 })}
               </div>
 
-              <div style={{ padding: '14px 8px 18px', textAlign: 'center', position: 'relative', zIndex: 1 }}>
+              <div style={{ padding: '14px 8px 18px', textAlign: 'center', position: 'relative', top: '8px', zIndex: 1 }}>
+                <p style={{ fontSize: '12px', lineHeight: 1.6, color: '#555', margin: '0 0 4px', maxWidth: '760px', marginInline: 'auto' }}>
+                  出典：{TEXTBOOK_SOURCE_TEXT}
+                </p>
                 <p style={{ fontSize: '11px', lineHeight: 1.6, color: '#948f84', margin: '0 0 8px', maxWidth: '760px', marginInline: 'auto' }}>
                   本教材のイラストは、生成AIを用いて制作しています。動画についても一部、生成AIで作成したものを使用しています。なお、実在するものを描いたイラストの中には、伝わりやすさを優先し、細部を簡略化して表現しているものがあります。使用素材に関する詳細は、教育委員会にて一元管理しています。
                 </p>
